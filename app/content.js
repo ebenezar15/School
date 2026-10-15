@@ -1157,7 +1157,7 @@ window.CD_CONTENT = (function () {
   /* ------------------------------------------------------------------ */
   const sims = [
     {
-      id: "cleanup", title: "Cleanup meltdown", age: "Age 4 · Preschool", skills: "Composure, Empathy, Choices", childStart: 45,
+      id: "cleanup", title: "Cleanup meltdown", age: "Age 4 · Preschool", band: "early", level: 1, who: "Aiden", skills: "Composure, Empathy, Choices", childStart: 45,
       blurb: "Cleanup is called. Aiden wants to keep building and the tower is coming down fast.",
       start: "a",
       nodes: {
@@ -1191,7 +1191,7 @@ window.CD_CONTENT = (function () {
       },
     },
     {
-      id: "hater", title: "“I hate you!”", age: "Age 8 · Grade 3", skills: "Composure, Positive Intent, Empathy", childStart: 40,
+      id: "hater", title: "“I hate you!”", age: "Age 8 · Grade 3", band: "primary", level: 2, who: "Maya", skills: "Composure, Positive Intent, Empathy", childStart: 40,
       blurb: "You collect Maya's phone-sized fidget toy during maths. She explodes in front of the class.",
       start: "a",
       nodes: {
@@ -1229,7 +1229,7 @@ window.CD_CONTENT = (function () {
       },
     },
     {
-      id: "pusher", title: "Shove in the line", age: "Age 6 · Grade 1", skills: "Assertiveness, Positive Intent", childStart: 55,
+      id: "pusher", title: "Shove in the line", age: "Age 6 · Grade 1", band: "primary", level: 1, who: "Leo & Ben", skills: "Assertiveness, Positive Intent", childStart: 55,
       blurb: "Leo pushes Ben out of his spot in line. Ben shouts. Both look at you.",
       start: "a",
       nodes: {
@@ -1264,7 +1264,7 @@ window.CD_CONTENT = (function () {
       },
     },
     {
-      id: "defiant", title: "“This is pointless”", age: "Age 13 · Grade 8", skills: "Composure, Positive Intent, Choices", childStart: 50,
+      id: "defiant", title: "“This is pointless”", age: "Age 13 · Grade 8", band: "secondary", level: 2, who: "Jordan", skills: "Composure, Positive Intent, Choices", childStart: 50,
       blurb: "Jordan pushes back his chair during a writing task and refuses to start.",
       start: "a",
       nodes: {
@@ -1295,7 +1295,7 @@ window.CD_CONTENT = (function () {
       },
     },
     {
-      id: "tattle", title: "The tattle stream", age: "Age 7 · Grade 2", skills: "Assertiveness, Consequences", childStart: 60,
+      id: "tattle", title: "The tattle stream", age: "Age 7 · Grade 2", band: "primary", level: 1, who: "Your class", skills: "Assertiveness, Consequences", childStart: 60,
       blurb: "Three children come to you in five minutes, each telling on someone.",
       start: "a",
       nodes: {
@@ -1325,6 +1325,316 @@ window.CD_CONTENT = (function () {
           ] },
         endGood: { end: true, title: "Three tattles, three lessons", text: "Zoe helped, Omar found his voice, and Ella got care fast.", lesson: "Sort the tattle first. Revenge needs “helpful or hurtful?”, intrusion needs the BIG Voice, and safety needs “I will take care of it.”" },
         endBad: { end: true, title: "Trust lost", text: "Children stop telling you things, including the important ones.", lesson: "Every tattle is a call for help. Dismissing them teaches children that authority can't be trusted." },
+      },
+    },
+    {
+      id: "exclusion", title: "“You can't sit here”", age: "Age 9 · Grade 4", band: "primary", level: 2, who: "Nia", skills: "Assertiveness, Empathy, Positive Intent", childStart: 40,
+      blurb: "At lunch, a group tells Nia the seat is “saved.” Her eyes fill with tears.",
+      start: "a",
+      nodes: {
+        a: { text: "Nia stands holding her tray. Chloe spreads her arm across the empty seat and says it's saved. The table giggles.", child: "Nia: “…okay.”", hint: "Two children need something here. Who first?",
+          choices: [
+            { t: "Go to Nia first: “Chloe said you can't sit here. Did you like it?”", comp: 5, child: 15, good: true, fb: "Victim first. You show Nia that her hurt matters more than the hurtful act.", next: "b" },
+            { t: "“Chloe, that's mean. Move your arm right now.”", comp: -5, child: 0, good: false, fb: "You rescued Nia, but she learned nothing about using her own voice, and Chloe feels attacked.", next: "c" },
+            { t: "“Nia, there's plenty of room at the next table.”", comp: 0, child: -15, good: false, fb: "This dismisses the hurt. Exclusion registers in the brain like physical pain.", next: "c" },
+          ] },
+        b: { text: "Nia shakes her head and whispers.", child: "Nia: “No.”",
+          choices: [
+            { t: "“Tell her, ‘I don't like it when you say I can't sit. I want to eat with you.’ Match your voice to mine.”", comp: 5, child: 20, good: true, fb: "Exact words plus voice coaching. Nia says it clearly the second time.", next: "d" },
+            { t: "“Go on, tell her how you feel.”", comp: 0, child: -5, good: false, fb: "A child who is upset rarely has the words ready. Give them.", next: "d" },
+          ] },
+        c: { text: "Nia walks off to eat alone by the window, head down.", child: "",
+          choices: [
+            { t: "Follow her, crouch and describe: “Your head is down like this. Lunch feels lonely right now.” Then walk back together.", comp: 5, child: 20, good: true, fb: "Describing her body without judgment brings her up a floor and earns her trust.", next: "b" },
+            { t: "Leave it. Children have to sort out friendships themselves.", comp: 0, child: -15, good: false, fb: "Without coaching, excluded children learn to stay silent and excluders learn it works.", next: "endBad" },
+          ] },
+        d: { text: "Chloe shrugs, a little defensive.", child: "Chloe: “We were talking about a secret.”",
+          choices: [
+            { t: "“You wanted privacy with your friends, so you said she couldn't sit. You didn't know another way. Leaving people out hurts. When you want privacy, say ‘Give us five minutes, then join us.’ Say it now.”", comp: 5, child: 15, good: true, fb: "Positive intent, the missing skill, a limit and a replacement phrase to practise.", next: "e" },
+            { t: "“Chloe, how would you feel if someone did that to you?”", comp: 0, child: -5, good: false, fb: "Guilt questions invite defence. Chloe crosses her arms.", next: "endOk" },
+          ] },
+        e: { text: "Chloe practises the words. Five minutes later, Nia is sitting at the end of the table, laughing at a joke.", child: "Chloe: “Give us five minutes, then you can join.”",
+          choices: [
+            { t: "Later: “Chloe, you made room for Nia so she wasn't alone. That was kind.” And plan a class meeting about lunch seating.", comp: 5, child: 10, good: true, fb: "Noticing the helpful act strengthens it. A class meeting turns one fix into a group agreement.", next: "endGood" },
+            { t: "“Good girls, both of you.”", comp: 0, child: -5, good: false, fb: "General praise is about your approval, not about what they did for each other.", next: "endOk" },
+          ] },
+        endGood: { end: true, title: "A seat at the table", text: "Nia ate with the group, and the class agreed on a “room for one more” lunch rule.", lesson: "Victim first with exact words, then positive intent and a replacement skill for the child who excluded. Exclusion hurts like a physical injury and needs the same urgency." },
+        endOk: { end: true, title: "Partly mended", text: "Nia found her voice, but Chloe still feels judged and the table stays cool.", lesson: "Swap guilt questions and general praise for positive intent and specific noticing.", stars: 2 },
+        endBad: { end: true, title: "Lunch alone", text: "Nia eats alone for the rest of the week.", lesson: "Exclusion is a call for help from both children. Coaching the victim and the excluder is how belonging is built." },
+      },
+    },
+    {
+      id: "biter", title: "The biter", age: "Age 2 · Toddler room", band: "early", level: 1, who: "Mateo", skills: "Assertiveness, Positive Intent (A.C.T.)", childStart: 25,
+      blurb: "Mateo bites Lily when she grabs his truck. Lily screams. Mateo freezes.",
+      start: "a",
+      nodes: {
+        a: { text: "Lily grabs Mateo's truck. Mateo bites her arm. Lily screams and everyone turns to look.", child: "Lily: “WAAAH!”", hint: "Toddlers in this moment are in the basement.",
+          choices: [
+            { t: "Go to Lily first, kneel and voice for her: “Ouch! That hurt. Tell Mateo, ‘Stop! No biting!’” (show a stop hand)", comp: 5, child: 10, good: true, fb: "Victim first, and you model the words and gesture a toddler can copy.", next: "b" },
+            { t: "“Mateo! Bad boy! We do NOT bite!”", comp: -10, child: -15, good: false, fb: "Shouting adds fear to fear. Mateo's alarm system gets louder.", next: "c" },
+            { t: "Put Mateo straight on the time-out chair.", comp: -5, child: -10, good: false, fb: "Isolation teaches a two-year-old nothing about what to do instead.", next: "c" },
+          ] },
+        b: { text: "Lily calms in your arms. Mateo stands frozen, eyes wide, hands clenched.", child: "",
+          choices: [
+            { t: "Breathe slowly and describe Mateo: “Your eyes are big. Your hands are tight like this. You seem scared.”", comp: 5, child: 25, good: true, fb: "Describe, then breathe when he looks at you. His body softens.", next: "d" },
+            { t: "“Say sorry to Lily right now.”", comp: 0, child: -10, good: false, fb: "A frozen toddler can't produce an apology. Safety first.", next: "c" },
+          ] },
+        c: { text: "Mateo starts crying and lunges toward Lily again, mouth open.", child: "Mateo: “MINE!”",
+          choices: [
+            { t: "Gently block with your hand and stay calm: “I won't let you bite. Biting hurts. You're safe.”", comp: 10, child: 15, good: true, fb: "A calm limit plus safety. You lend him the control he doesn't have yet.", next: "b" },
+            { t: "“NO!” loudly, and pull him away by the arm.", comp: -10, child: -15, good: false, fb: "Grabbing and shouting keep him in survival state.", next: "endBad" },
+          ] },
+        d: { text: "Mateo leans into you, sniffing. He points at the truck.", child: "Mateo: “Twuck.”",
+          choices: [
+            { t: "A.C.T.: “You wanted the truck. When you want it, hold out your hand and say ‘Mine, please.’ Show me.”", comp: 5, child: 20, good: true, fb: "Acknowledge, clarify, take time to practise, with the gesture included.", next: "e" },
+            { t: "“We share in this room.”", comp: 0, child: -5, good: false, fb: "Too vague for a two-year-old. Give him the exact action.", next: "endOk" },
+          ] },
+        e: { text: "Mateo holds out his hand to Lily and says “Mine, please.” Lily hands back the truck.", child: "Mateo: “Mine, pease.”",
+          choices: [
+            { t: "“You did it! You held out your hand and used your words.” Then help Lily choose a truck too.", comp: 5, child: 15, good: true, fb: "Noticing the new skill and solving the real problem: two toddlers, one truck.", next: "endGood" },
+          ] },
+        endGood: { end: true, title: "Words instead of teeth", text: "Mateo and Lily drive trucks side by side. You note the moment for both families.", lesson: "Biting is a toddler's call for help with a skill they lack. Victim first, safety, describe and breathe, then A.C.T. with the gesture." },
+        endOk: { end: true, title: "Calm, but no skill", text: "Mateo calms, but the next time someone grabs, he bites again.", lesson: "Toddlers need the exact words and gesture, practised on the spot.", stars: 2 },
+        endBad: { end: true, title: "More fear", text: "Mateo sobs for ten minutes and bites again after nap.", lesson: "Fear can't teach a two-year-old. Lend your calm and teach the replacement skill." },
+      },
+    },
+    {
+      id: "rage", title: "Desk flip", age: "Age 11 · Grade 5", band: "primary", level: 3, who: "Marcus", skills: "Composure, Empathy, Safety plan", childStart: 12,
+      blurb: "Marcus storms in from recess and flips his desk. Papers fly. The class freezes.",
+      start: "a",
+      nodes: {
+        a: { text: "Marcus kicks the door open, shoves his desk over and stands breathing hard. Twenty-five children stare at you.", child: "Marcus: “LEAVE ME ALONE!”", hint: "Rage. Everyone's safety comes first, including his.",
+          choices: [
+            { t: "Breathe. Calm voice to the class: “Everyone, be a S.T.A.R. with me and move to the carpet.” Keep your distance from Marcus.", comp: 10, child: 5, good: true, fb: "You took charge of safety and gave the class a job. Your calm downloads to the room.", next: "b" },
+            { t: "“Marcus! Pick that desk up NOW!”", comp: -15, child: -10, good: false, fb: "A command shouted at someone in rage is fuel on the fire.", next: "c" },
+            { t: "Rush over and grab his arm.", comp: -15, child: -15, good: false, fb: "Physical contact with a child in rage, without a plan, risks injury and escalation.", next: "c" },
+          ] },
+        b: { text: "The class is on the carpet, breathing. Marcus paces, fists clenched, kicking a chair leg.", child: "",
+          choices: [
+            { t: "From a safe distance: “Your fists are tight. Your body has huge energy. Walk with me to the hall.” (His plan: move first.)", comp: 5, child: 20, good: true, fb: "Rage needs movement before calm. You're following his rage plan.", next: "d" },
+            { t: "“Sit down and calm down.”", comp: 0, child: -15, good: false, fb: "Sitting still is the hardest thing for a body flooded with rage.", next: "c" },
+          ] },
+        c: { text: "Marcus hurls a book at the wall and shouts that he hates everyone.", child: "Marcus: “I HATE THIS PLACE!”",
+          choices: [
+            { t: "Call the office for your planned support. Stay calm and steady: “I will keep everyone safe, including you.”", comp: 10, child: 10, good: true, fb: "Using your support plan is strength, not failure. You stay present.", next: "b" },
+            { t: "“That's it. You'll be suspended for this.”", comp: -10, child: -20, good: false, fb: "Threats can't reach the basement. The rage spikes.", next: "endBad" },
+          ] },
+        d: { text: "After three laps of the corridor, Marcus's breathing slows. He leans against the wall.", child: "",
+          choices: [
+            { t: "D.N.A.: “You seem furious. Something happened at recess?”", comp: 5, child: 20, good: true, fb: "Name, then a gentle, open guess. He looks at you for the first time.", next: "e" },
+            { t: "“That was completely unacceptable. Someone could have been hurt.”", comp: 0, child: -15, good: false, fb: "True, but it belongs later. Right now it pushes him back down.", next: "endOk" },
+          ] },
+        e: { text: "Marcus's voice cracks.", child: "Marcus: “They said my mum's in jail. Everyone was laughing.”",
+          choices: [
+            { t: "“You were hoping they'd stop. That really hurts. You're safe with me.” Later: he helps put the room right, the class wishes him well, and you review his rage book together.", comp: 5, child: 20, good: true, fb: "Empathy first, repair and plan afterwards. Accountability without shame.", next: "endGood" },
+            { t: "“I'm sorry, but you'll still miss recess tomorrow.”", comp: 0, child: -10, good: false, fb: "A consequence right after a disclosure feels like being punished for the pain.", next: "endOk" },
+          ] },
+        endGood: { end: true, title: "Through the storm", text: "Marcus rejoins the class within the hour. Classmates help him pick up papers. You speak to the counsellor about the teasing.", lesson: "Rage needs safety, movement first and calm second, then empathy. Repair and consequences come once the child is back on the top floor." },
+        endOk: { end: true, title: "Calm, but closed", text: "Marcus calms, but shuts down and won't talk about what happened.", lesson: "Lectures and quick consequences right after rage close the door to understanding. Lead with empathy.", stars: 2 },
+        endBad: { end: true, title: "Escalation", text: "Marcus is removed by two adults and the class is shaken for the rest of the day.", lesson: "Threats and grabbing escalate rage. Plan support in advance, keep the class safe, and let the child move first." },
+      },
+    },
+    {
+      id: "parent", title: "Angry parent at pick-up", age: "Adult · Parent", band: "adult", level: 2, who: "Ms. Ortiz", meter: "Parent's state", skills: "Composure, Positive Intent, Empathy", childStart: 22,
+      blurb: "A parent storms in at pick-up. Her son came home with a bite mark, again.",
+      start: "a",
+      nodes: {
+        a: { text: "Ms. Ortiz walks straight past the queue of parents to you.", child: "Ms. Ortiz: “My son came home with a bite mark AGAIN. What kind of place is this?”", hint: "Your heart is racing. Adults use the same brain states.",
+          choices: [
+            { t: "Breathe: “I'm safe. I can handle this.” Then: “You're worried about Sam's safety here.”", comp: 10, child: 15, good: true, fb: "Composure, then flip and reflect: you named the wish under the anger.", next: "b" },
+            { t: "“Please calm down. These things happen with toddlers.”", comp: -5, child: -20, good: false, fb: "“Calm down” and “these things happen” both dismiss her fear.", next: "c" },
+            { t: "“I'm not able to discuss other children.”", comp: -5, child: -15, good: false, fb: "True, but leading with a wall sounds cold and defensive.", next: "c" },
+          ] },
+        b: { text: "She's still sharp, but she's listening.", child: "Ms. Ortiz: “Worried? I'm furious. Nobody even called me!”",
+          choices: [
+            { t: "“You were hoping we'd call you straight away. That makes complete sense.”", comp: 5, child: 20, good: true, fb: "Acknowledging her wish lowers her guard. She takes a breath.", next: "d" },
+            { t: "“We did fill in the incident form.”", comp: -5, child: -10, good: false, fb: "Defending the process tells her she's wrong to be upset.", next: "c" },
+          ] },
+        c: { text: "Her voice rises. Other parents are watching.", child: "Ms. Ortiz: “Don't give me excuses!”",
+          choices: [
+            { t: "Lower your voice, step closer: “I want to hear this properly. Can we talk in the office for five minutes?”", comp: 10, child: 15, good: true, fb: "Removing the audience lowers threat for both of you.", next: "b" },
+            { t: "“If you shout, I'll have to ask you to leave.”", comp: -10, child: -20, good: false, fb: "A threat turns a worried parent into an opponent.", next: "endBad" },
+          ] },
+        d: { text: "Her shoulders drop.", child: "Ms. Ortiz: “I just need to know he's safe here.”",
+          choices: [
+            { t: "“My job is to keep him safe. Here's the plan: an adult stays close at playtime, we're teaching the children words for turns, and I'll call you by 3pm if anything happens.”", comp: 5, child: 20, good: true, fb: "Specific actions and a clear commitment rebuild trust.", next: "e" },
+            { t: "“Sam's lovely. I'm sure it won't happen again.”", comp: 0, child: -10, good: false, fb: "Vague reassurance sounds like a brush-off.", next: "endOk" },
+          ] },
+        e: { text: "She nods slowly.", child: "Ms. Ortiz: “Can you call me on Friday either way?”",
+          choices: [
+            { t: "“I'm going to call you Friday at 3. Thank you for telling me how worried you were.”", comp: 5, child: 15, good: true, fb: "An “I'm going to” commitment and appreciation for her honesty.", next: "endGood" },
+          ] },
+        endGood: { end: true, title: "From opponent to partner", text: "On Friday you call as promised. Ms. Ortiz becomes one of your strongest supporters.", lesson: "Parents in survival or emotional state need the same skills as children: composure, flip and reflect, empathy, then a clear plan." },
+        endOk: { end: true, title: "Calmer, not convinced", text: "She leaves quieter but still doubtful.", lesson: "Replace reassurance with specific actions and commitments.", stars: 2 },
+        endBad: { end: true, title: "A complaint is filed", text: "Ms. Ortiz goes straight to the principal.", lesson: "Threats and defensiveness escalate adults too. Calm yourself first and reflect the wish behind the anger." },
+      },
+    },
+    {
+      id: "chaos", title: "After the substitute", age: "Age 8 · Whole class", band: "primary", level: 2, who: "Your class", meter: "Class state", skills: "Assertiveness, Consequences (P.E.A.C.E.)", childStart: 35,
+      blurb: "You're back after two days away. The class is loud, the substitute's note is grim.",
+      start: "a",
+      nodes: {
+        a: { text: "Children are out of their seats, someone is drumming on a desk, and the noise is rising.", child: "Class: (noise)", hint: "Whole-group attention first.",
+          choices: [
+            { t: "Ring the chime, raise your hand, lead one S.T.A.R. breath, notice by name who stopped, then give the next step.", comp: 10, child: 20, good: true, fb: "Signal, breathe, notice, direct. The room settles in seconds.", next: "b" },
+            { t: "“QUIET! Everyone sit down NOW!”", comp: -10, child: -10, good: false, fb: "Shouting adds to the noise and models losing control.", next: "c" },
+            { t: "Flick the lights off and stand silently, arms folded.", comp: -5, child: -5, good: false, fb: "Silence works sometimes, but the folded-arms glare reads as a threat.", next: "c" },
+          ] },
+        b: { text: "The class is seated. The note says they were rude and ignored the substitute.", child: "",
+          choices: [
+            { t: "Share calmly: “The note says these days were hard. I feel disappointed. My job is to keep us safe and helpful. Let's solve this in a class meeting.”", comp: 5, child: 15, good: true, fb: "Problem and impact, honestly and without guilt-tripping. Step P of P.E.A.C.E.", next: "d" },
+            { t: "“Everyone loses Golden Time this week.”", comp: -5, child: -15, good: false, fb: "A blanket punishment punishes the helpful children too and teaches nothing.", next: "c" },
+          ] },
+        c: { text: "Groans and protests break out.", child: "Class: “It wasn't me!” “That's not fair!”",
+          choices: [
+            { t: "Breathe. “You're hoping I know some of you tried. Let's figure this out together.”", comp: 10, child: 15, good: true, fb: "Positive intent for the whole group turns protest into willingness.", next: "b" },
+            { t: "Lecture for ten minutes about respect.", comp: -5, child: -15, good: false, fb: "Lectures switch children off and invite blame.", next: "endBad" },
+          ] },
+        d: { text: "In the circle, the blaming starts.", child: "Ava: “Jayden kept making noises the whole time!”",
+          choices: [
+            { t: "“You were hoping your friends would listen. So the problem is: remembering our agreements when a guest teacher comes.”", comp: 5, child: 15, good: true, fb: "Positive intent and affirming the problem as what you want. Steps E and A.", next: "e" },
+            { t: "“Jayden, is that true?”", comp: 0, child: -10, good: false, fb: "Now it's a trial. Jayden defends himself and the meeting stalls.", next: "endOk" },
+          ] },
+        e: { text: "Ideas flow: a welcome book for substitutes, a Substitute Helper job, and a hand signal for “let's listen.”", child: "Kai: “We could write her a sorry card too!”",
+          choices: [
+            { t: "Collect, agree, role-play the signal, then: “How will we know it's working?” Plan a check-in after the next substitute day.", comp: 5, child: 15, good: true, fb: "Collect solutions and evaluate. Ownership belongs to the class now.", next: "endGood" },
+          ] },
+        endGood: { end: true, title: "Class solved it", text: "The next substitute leaves a glowing note. The class celebrates their plan working.", lesson: "Whole-class problems need problem-solving consequences: P.E.A.C.E. in a class meeting, with shared power, not blanket punishment." },
+        endOk: { end: true, title: "Meeting stalled", text: "The class makes a plan, but Jayden feels singled out.", lesson: "Keep blame out of class meetings. Reframe it as what children were hoping for.", stars: 2 },
+        endBad: { end: true, title: "Resentment", text: "The class is quiet but resentful, and the next substitute day goes the same way.", lesson: "Punishment and lectures don't build the skills a class needs. Problem-solve together." },
+      },
+    },
+    {
+      id: "dontcare", title: "“I don't care”", age: "Age 12 · Grade 7", band: "secondary", level: 3, who: "Ellie", skills: "Empathy, Connection, Consequences", childStart: 30,
+      blurb: "Ellie has missed three assignments. When you mention it, she shrugs.",
+      start: "a",
+      nodes: {
+        a: { text: "You crouch by Ellie's desk and mention the three missing assignments.", child: "Ellie: “I don't care. Just give me a zero.”", hint: "“I don't care” often means “I don't feel cared for.”",
+          choices: [
+            { t: "“You seem done with all of this. Something feels heavy?”", comp: 5, child: 15, good: true, fb: "You looked past the words to the feeling.", next: "b" },
+            { t: "“Fine. Zeros it is.”", comp: -5, child: -15, good: false, fb: "A consequence for a disconnected child confirms her belief that nobody cares.", next: "c" },
+            { t: "“You should care. This affects your grade.”", comp: 0, child: -10, good: false, fb: "“Should” lands as judgment. She pulls away.", next: "c" },
+          ] },
+        b: { text: "Ellie stares at her desk.", child: "Ellie: “What's the point? I'm stupid at this anyway.”",
+          choices: [
+            { t: "“You've been feeling like you can't do it, so not trying feels safer.”", comp: 5, child: 20, good: true, fb: "Empathy for the fear underneath. She looks up.", next: "d" },
+            { t: "“You're not stupid! You're really smart!”", comp: 0, child: -10, good: false, fb: "Reassurance argues with her feeling. She hears that you don't get it.", next: "c" },
+          ] },
+        c: { text: "Ellie puts her headphones on and turns away.", child: "",
+          choices: [
+            { t: "Don't fight it. Later, quietly: “I noticed your sketches in the margin. They're amazing. Can I see?”", comp: 5, child: 20, good: true, fb: "Connection before correction. You noticed something she cares about.", next: "b" },
+            { t: "Take the headphones and give a detention.", comp: -10, child: -20, good: false, fb: "Power over a disconnected teen deepens the disconnection.", next: "endBad" },
+          ] },
+        d: { text: "Ellie softens a little.", child: "Ellie: “It's just… so much. I don't know where to start.”",
+          choices: [
+            { t: "Lend your executive skills: “Let's break the first one into steps. Would you start with the outline or the first paragraph? I'll check in after ten minutes.”", comp: 5, child: 20, good: true, fb: "Scaffolding task initiation plus two choices. The mountain becomes a step.", next: "e" },
+            { t: "“So you'll have all three in by Monday?”", comp: 0, child: -10, good: false, fb: "Overwhelm is the problem. A bigger demand adds to it.", next: "endOk" },
+          ] },
+        e: { text: "Ten minutes later, Ellie has a full outline.", child: "Ellie: “Okay. That wasn't as bad as I thought.”",
+          choices: [
+            { t: "“You started, and you finished the whole outline. That took courage.” Agree on a plan for the next two.", comp: 5, child: 15, good: true, fb: "Noticing her effort and building the next step together.", next: "endGood" },
+          ] },
+        endGood: { end: true, title: "From shrug to start", text: "Ellie hands in two assignments that week and starts showing you her sketches.", lesson: "Connection comes before consequences. Scaffold the missing executive skill (here, task initiation) and notice effort." },
+        endOk: { end: true, title: "Still overwhelmed", text: "Ellie means to catch up but freezes over the weekend.", lesson: "Break big demands into small steps and check in. Lend your prefrontal lobes.", stars: 2 },
+        endBad: { end: true, title: "Further away", text: "Ellie starts skipping your class.", lesson: "Rewards and punishments stop working when the caring system is offline. Only connection restarts it." },
+      },
+    },
+    {
+      id: "phone", title: "Phone under the desk", age: "Age 15 · Grade 10", band: "secondary", level: 2, who: "Dev", skills: "Choices, Positive Intent, Logical consequences", childStart: 50,
+      blurb: "Dev is texting during safety instructions for a lab. Second time this lesson.",
+      start: "a",
+      nodes: {
+        a: { text: "You're explaining lab safety. Dev's phone glows under the desk again.", child: "", hint: "Older students respond to respect and real choices.",
+          choices: [
+            { t: "Walk over, quietly: “Dev, phone in your bag or on my desk till the bell. Which works for you?”", comp: 5, child: 15, good: true, fb: "Closeness, a quiet voice and two real choices that both reach your goal.", next: "b" },
+            { t: "From the front: “Dev! Phone away or I'm taking it!”", comp: -10, child: -15, good: false, fb: "A public threat makes backing down feel like losing face.", next: "c" },
+            { t: "Ignore it and keep going.", comp: 0, child: -5, good: false, fb: "Ignoring a safety issue in a lab isn't an option.", next: "c" },
+          ] },
+        b: { text: "Dev looks up, a little defensive.", child: "Dev: “It's my mum. It's important.”",
+          choices: [
+            { t: "“You want to stay in touch with your mum. If it's urgent, step outside for one minute, then it goes in your bag.”", comp: 5, child: 20, good: true, fb: "Positive intent and a respectful solution that keeps the limit.", next: "d" },
+            { t: "“Rules are rules.”", comp: -5, child: -10, good: false, fb: "It shuts down the conversation and ignores a real need.", next: "c" },
+          ] },
+        c: { text: "Dev rolls his eyes and keeps the phone out.", child: "Dev: “Whatever.”",
+          choices: [
+            { t: "Breathe, Quit Taking It Personally, and repeat calmly: “Bag or my desk. Your choice.”", comp: 10, child: 10, good: true, fb: "Parroting the same two choices without heat.", next: "b" },
+            { t: "Send him to the office.", comp: -10, child: -15, good: false, fb: "Exclusion turns a phone problem into a relationship problem.", next: "endBad" },
+          ] },
+        d: { text: "Dev steps out, comes back and agrees: if the phone comes out again, it stays on your desk till the bell. Ten minutes later, it's out again.", child: "",
+          choices: [
+            { t: "Calmly: “I can see by your actions you've chosen to put it on my desk. You'll get it back at the bell.”", comp: 5, child: 10, good: true, fb: "A related, respectful, reasonable consequence he agreed to.", next: "e" },
+            { t: "Take it, and add: “And you've got detention.”", comp: -5, child: -15, good: false, fb: "An unrelated extra is punishment, not a consequence.", next: "endOk" },
+          ] },
+        e: { text: "Dev hands it over, muttering.", child: "Dev: “This is so unfair.”",
+          choices: [
+            { t: "“You seem annoyed. You were hoping to keep it close. It's hard. It's yours at the bell.”", comp: 5, child: 20, good: true, fb: "Empathy during the backlash keeps the feeling with Dev.", next: "endGood" },
+            { t: "“You should have thought of that before.”", comp: -5, child: -10, good: false, fb: "A lecture after a consequence leads to blaming you.", next: "endOk" },
+          ] },
+        endGood: { end: true, title: "Consequence that teaches", text: "Dev collects his phone at the bell and nods. Next lesson, it stays in his bag.", lesson: "Choices first, positive intent for real needs, then a logical consequence (related, respectful, reasonable) followed by empathy, not a lecture." },
+        endOk: { end: true, title: "Compliance, with resentment", text: "Dev complies but complains about you to friends.", lesson: "Keep consequences related, and follow them with empathy.", stars: 2 },
+        endBad: { end: true, title: "Lost him", text: "Dev spends the lab in the office and misses the safety instructions entirely.", lesson: "Public threats and exclusion escalate teens. Quiet, respectful choices work better." },
+      },
+    },
+    {
+      id: "arrival", title: "The new student", age: "Age 7 · Grade 2", band: "primary", level: 1, who: "Kai", skills: "Composure, Noticing, Encouragement", childStart: 20,
+      blurb: "Kai joins midyear. Hood up, eyes down, he won't greet you at the door.",
+      start: "a",
+      nodes: {
+        a: { text: "It's Kai's first day. He stands at the door with his hood up, staring at the floor.", child: "", hint: "Arms crossed, eyes down: he's asking “Am I safe?”",
+          choices: [
+            { t: "Breathe, then mirror and describe: “Your hood is up and your arms are going like this.”", comp: 5, child: 20, good: true, fb: "Noticing without judging. He glances at you.", next: "b" },
+            { t: "“Look at me, Kai. We say good morning here.”", comp: -5, child: -10, good: false, fb: "Demanding eye contact feels threatening to a scared child.", next: "c" },
+            { t: "Skip him and greet the next child.", comp: 0, child: -10, good: false, fb: "It avoids a struggle but tells him he's invisible.", next: "c" },
+          ] },
+        b: { text: "Kai looks up for a second.", child: "",
+          choices: [
+            { t: "Take a slow breath right then, and offer: “High five, wave or fist bump?”", comp: 5, child: 20, good: true, fb: "Breathe at eye contact so your calm downloads, then offer a choice.", next: "d" },
+            { t: "“See, that wasn't so hard!”", comp: 0, child: -10, good: false, fb: "A small jab. He drops his eyes again.", next: "c" },
+          ] },
+        c: { text: "Kai backs against the wall.", child: "",
+          choices: [
+            { t: "Give him space: “You're safe here. I'll be right here when you're ready.” Introduce a buddy to show him his peg.", comp: 5, child: 15, good: true, fb: "Safety and a buddy lower the threat.", next: "b" },
+            { t: "“We're all waiting for you, Kai.”", comp: -5, child: -15, good: false, fb: "Public pressure makes the threat bigger.", next: "endBad" },
+          ] },
+        d: { text: "Kai gives a tiny wave. Later he drops his pencil box and a classmate, Ava, helps him.", child: "Kai: “…thanks.”",
+          choices: [
+            { t: "“Ava, you helped Kai pick up his pencils so he could start. That was helpful.” Then give Kai a job: plant waterer.", comp: 5, child: 20, good: true, fb: "Noticing kindness and giving the new child a contribution creates belonging fast.", next: "endGood" },
+            { t: "“Kai, be more careful with your things.”", comp: 0, child: -10, good: false, fb: "A correction on day one when he needed connection.", next: "endOk" },
+          ] },
+        endGood: { end: true, title: "Part of the family", text: "By home time, Kai has watered the plants and shows his mum the job board.", lesson: "New children ask “Am I safe?” first. Notice, breathe at eye contact, offer a greeting choice, then give them a job that matters." },
+        endOk: { end: true, title: "Settled, not connected", text: "Kai gets through the day but stays quiet and watchful.", lesson: "Day one is for connection. Notice kindness and give a contribution.", stars: 2 },
+        endBad: { end: true, title: "Rough start", text: "Kai spends the morning hiding in the book corner.", lesson: "Pressure keeps a scared child in survival state. Offer safety and space first." },
+      },
+    },
+    {
+      id: "snap", title: "You snapped", age: "Adult · Yourself", band: "adult", level: 2, who: "Your class", meter: "Class trust", skills: "Composure, Oops, Repair", childStart: 30,
+      blurb: "Long day. You yell at the class. Twenty faces go still. Now what?",
+      start: "a",
+      nodes: {
+        a: { text: "It's 2pm, you're exhausted, and you hear yourself shout: “What is WRONG with you all?!” The room goes silent. A few children shrink.", child: "", hint: "This is about your own brain state.",
+          choices: [
+            { t: "Stop. Breathe visibly: “I'm going to take three breaths.” Lead them in S.T.A.R. too.", comp: 15, child: 15, good: true, fb: "Modelling composure in the moment you lost it is a powerful lesson.", next: "b" },
+            { t: "Keep going: “And I'm sick of repeating myself!”", comp: -15, child: -15, good: false, fb: "You're in the emotional state, and the class is sliding into survival.", next: "c" },
+            { t: "Pretend nothing happened and carry on.", comp: 0, child: -10, good: false, fb: "Unrepaired ruptures leave children unsure if they're safe.", next: "c" },
+          ] },
+        b: { text: "You're calmer. The children are watching you carefully.", child: "",
+          choices: [
+            { t: "“Oops. I yelled. I was frustrated and I didn't handle it well. That was hurtful. Next time I'll take a breath first.”", comp: 10, child: 20, good: true, fb: "Owning your impact models exactly what you want children to do after mistakes.", next: "d" },
+            { t: "“Well, you pushed me to it.”", comp: -10, child: -15, good: false, fb: "Blaming them hands them responsibility for your feelings.", next: "c" },
+          ] },
+        c: { text: "You hear a whisper from the back.", child: "Child: “She's scary today.”",
+          choices: [
+            { t: "Pause, breathe and remind yourself: “I'm safe. I can handle this.” Then go back and repair.", comp: 10, child: 10, good: true, fb: "It's never too late to compose yourself and repair.", next: "b" },
+            { t: "“Who said that?”", comp: -10, child: -15, good: false, fb: "Hunting the whisperer makes everyone less safe.", next: "endBad" },
+          ] },
+        d: { text: "Shoulders relax across the room.", child: "Child: “It's okay. We were being really loud.”",
+          choices: [
+            { t: "“Thank you. What would help us get through this afternoon?” They suggest a brain break, and you do one together.", comp: 5, child: 20, good: true, fb: "Repair, then shared problem solving. Trust is restored and even strengthened.", next: "endGood" },
+            { t: "Move straight on to the worksheet.", comp: 0, child: -5, good: false, fb: "The repair was good, but skipping the solution leaves the problem in place.", next: "endOk" },
+          ] },
+        endGood: { end: true, title: "Rupture and repair", text: "The afternoon goes smoothly. A child says later that they liked it when you said Oops.", lesson: "Everyone loses composure. What teaches is the repair: breathe, own your impact with Oops, and solve the problem together." },
+        endOk: { end: true, title: "Repaired, not resolved", text: "Trust is mostly back, but the afternoon is still bumpy.", lesson: "After repairing, ask the class what would help. Shared solutions stick.", stars: 2 },
+        endBad: { end: true, title: "A tense afternoon", text: "The class is silent and watchful for the rest of the day.", lesson: "When you drop to survival or emotional state, the class drops with you. Compose yourself, then repair." },
       },
     },
   ];
@@ -1403,11 +1713,11 @@ window.CD_CONTENT = (function () {
   ];
 
   const palettes = [
-    { id: "", name: "Classroom", dots: ["#0f7a6c", "#f2b134", "#eef3f2"] },
-    { id: "chalkboard", name: "Chalkboard", dots: ["#26392f", "#f4e48a", "#f39c8b"] },
-    { id: "crayon", name: "Crayon box", dots: ["#e2483d", "#2f7de1", "#fff8ec"] },
-    { id: "ocean", name: "Deep ocean", dots: ["#13213a", "#5cb8ff", "#ffb86b"] },
-    { id: "orchard", name: "Orchard", dots: ["#6b8f23", "#b5432f", "#f4f1e4"] },
+    { id: "", name: "Neural (auto)", dots: ["#060918", "#4de8ff", "#ff5fd2"] },
+    { id: "synthwave", name: "Synthwave", dots: ["#12051f", "#ff4fd8", "#ffb347"] },
+    { id: "solar", name: "Solar flare", dots: ["#140a04", "#ffae42", "#ff5e3a"] },
+    { id: "ocean", name: "Deep ocean", dots: ["#021317", "#2ff3e0", "#6aa8ff"] },
+    { id: "aurora", name: "Aurora (light)", dots: ["#f3f0ff", "#6b3cf0", "#00a88e"] },
     { id: "contrast", name: "High contrast", dots: ["#000000", "#ffe600", "#00e5ff"] },
   ];
 
@@ -1423,6 +1733,7 @@ window.CD_CONTENT = (function () {
     { id: "perfect", name: "Flawless", desc: "Get every answer right in a module challenge", icon: "star", color: "gold", test: (S) => Object.values(S.quiz).some((q) => q.best === q.of) },
     { id: "sorter", name: "Sharp Sorter", desc: "Perfect a do/don't sort", icon: "check", color: "gold", test: (S) => Object.keys(S.sorter || {}).length > 0 },
     { id: "sim3", name: "Calm Under Fire", desc: "Earn 3 stars in any simulator scenario", icon: "flame", color: "gold", test: (S) => Object.values(S.sims).some((v) => v >= 3) },
+    { id: "pressure", name: "Ice Cool", desc: "Earn 2+ stars in pressure mode", icon: "clock", color: "gold", test: (S) => Object.keys(S.earned).some((k) => k.startsWith("simP:")) },
     { id: "simall", name: "Seasoned", desc: "Play every simulator scenario", icon: "play", color: "core", test: (S, C) => C.sims.every((x) => S.sims[x.id]) },
     { id: "spotter", name: "State Spotter", desc: "Score 8+ in Spot the State", icon: "eye", color: "core", test: (S) => (S.idgame || 0) >= 8 },
     { id: "breath", name: "Breath Keeper", desc: "Complete 3 calming exercises", icon: "wind", color: "safety", test: (S) => (S.breaths || 0) >= 3 },

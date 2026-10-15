@@ -52,7 +52,9 @@
 
   /* ---------- Themes ---------- */
   const root = document.documentElement;
+  if (!C.palettes.some((p) => p.id === (S.palette || ""))) S.palette = "";
   function applyTheme() {
+    setTimeout(() => window.dispatchEvent(new Event("cd-theme")), 50);
     if (S.palette) root.setAttribute("data-palette", S.palette); else root.removeAttribute("data-palette");
     if (S.mode) root.setAttribute("data-theme", S.mode); else root.removeAttribute("data-theme");
   }
@@ -126,7 +128,7 @@
   function levelUp(lv) {
     confetti();
     const m = h(`<div class="levelup" role="dialog" aria-modal="true" aria-label="Level up">
-      <div class="card"><div class="skill-badge">${icon("trophy")}</div><span class="eyebrow">Level up</span><h2>${esc(lv.title)}</h2><p class="muted">${esc(lv.note)}</p><button class="btn" type="button">Keep going</button></div></div>`);
+      <div class="card"><span class="burst"></span><span class="burst"></span><div class="skill-badge">${icon("trophy")}</div><span class="eyebrow">Level up</span><h2>${esc(lv.title)}</h2><p class="muted">${esc(lv.note)}</p><button class="btn" type="button">Keep going</button></div></div>`);
     document.body.appendChild(m);
     const close = () => { m.remove(); document.removeEventListener("keydown", onKey); };
     const onKey = (e) => { if (e.key === "Escape") close(); };
@@ -322,7 +324,14 @@
     s.innerHTML = `<div class="stage-inner view-enter">${html}</div>`;
     window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
     wireTrees(s);
+    if (!reduced) { const sc = h('<div class="scan" aria-hidden="true"></div>'); document.body.appendChild(sc); setTimeout(() => sc.remove(), 750); }
     after && after(s);
+    $$("[data-count]", s).forEach((el) => countUp(el, +el.dataset.count));
+  }
+  function countUp(el, to) {
+    if (reduced || !to) return;
+    const t0 = performance.now(), d = 900;
+    (function f(t) { const k = Math.min(1, (t - t0) / d); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); })(t0);
   }
 
   function viewHome() {
@@ -333,7 +342,7 @@
       <section class="hero">
         <div class="section">
           <span class="eyebrow">Based on Conscious Discipline by Becky A. Bailey</span>
-          <h1>Discipline starts with <em>your</em> calm.</h1>
+          <h1>Discipline starts with <span class="grad">your calm.</span></h1>
           <p class="lede">${esc(C.intro.lede)}</p>
           <div class="hero-actions"><a class="btn" href="#brain">${icon("brain")} Start with the brain</a><a class="btn ghost" href="#sim">${icon("play")} Try a real-life scenario</a></div>
         </div>
@@ -375,28 +384,15 @@
   }
 
   function heroArt() {
-    // Three-floor "brain building" from the book's metaphor, gently animated.
-    return `<svg class="hero-art" viewBox="0 0 400 400" role="img" aria-label="Three stacked floors: Survival, Emotional and Executive states">
-      <defs><linearGradient id="hg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".18"/><stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
-      <circle cx="200" cy="200" r="185" fill="url(#hg)"/>
-      <g>
-        <rect x="80" y="70" width="240" height="80" rx="18" fill="var(--executive)"><animate attributeName="y" values="70;64;70" dur="5s" repeatCount="indefinite"/></rect>
-        <text x="200" y="104" text-anchor="middle" fill="var(--surface)" font-family="var(--f-display)" font-weight="800" font-size="22">Executive<animate attributeName="y" values="104;98;104" dur="5s" repeatCount="indefinite"/></text>
-        <text x="200" y="130" text-anchor="middle" fill="var(--surface)" font-family="var(--f-hand)" font-size="17">What can I learn?<animate attributeName="y" values="130;124;130" dur="5s" repeatCount="indefinite"/></text>
-        <rect x="80" y="160" width="240" height="80" rx="18" fill="var(--emotional)"/>
-        <text x="200" y="194" text-anchor="middle" fill="#2b1d00" font-family="var(--f-display)" font-weight="800" font-size="22">Emotional</text>
-        <text x="200" y="220" text-anchor="middle" fill="#2b1d00" font-family="var(--f-hand)" font-size="17">Am I loved?</text>
-        <rect x="80" y="250" width="240" height="80" rx="18" fill="var(--survival)"/>
-        <text x="200" y="284" text-anchor="middle" fill="var(--surface)" font-family="var(--f-display)" font-weight="800" font-size="22">Survival</text>
-        <text x="200" y="310" text-anchor="middle" fill="var(--surface)" font-family="var(--f-hand)" font-size="17">Am I safe?</text>
-      </g>
-      <g fill="none" stroke="var(--ink-soft)" stroke-width="2.5" stroke-linecap="round">
-        <path d="M350 300 V100" stroke-dasharray="6 8"><animate attributeName="stroke-dashoffset" values="0;-28" dur="1.2s" repeatCount="indefinite"/></path>
-        <path d="M342 110 l8 -10 l8 10"/>
-      </g>
-      <text x="350" y="345" text-anchor="middle" fill="var(--ink-soft)" font-family="var(--f-display)" font-size="13" font-weight="700">calm moves</text>
-      <text x="350" y="361" text-anchor="middle" fill="var(--ink-soft)" font-family="var(--f-display)" font-size="13" font-weight="700">us up</text>
-    </svg>`;
+    // Holographic version of the book's three-floor building, slowly rotating in 3D.
+    return `<div class="holo" role="img" aria-label="Three glowing floors: Survival, Emotional and Executive states">
+      <div class="holo-ring"></div>
+      <div class="holo-stack"><div class="holo-floor f1"></div><div class="holo-floor f2"></div><div class="holo-floor f3"></div></div>
+      <div class="holo-beam"></div><i class="holo-spark"></i><i class="holo-spark"></i><i class="holo-spark"></i>
+      <div class="holo-label l3"><b>Executive</b><span>What can I learn?</span></div>
+      <div class="holo-label l2"><b>Emotional</b><span>Am I loved?</span></div>
+      <div class="holo-label l1"><b>Survival</b><span>Am I safe?</span></div>
+    </div>`;
   }
 
   function viewBrain() {
@@ -411,7 +407,7 @@
         <svg class="brain-svg" viewBox="0 0 360 330" role="img" aria-label="Interactive three-floor model of brain states">
           ${B.states.map((st, i) => {
             const y = 20 + (2 - i) * 100;
-            const dark = st.id === "emotional" ? "#2b1d00" : "var(--surface)";
+            const dark = "var(--on-state)";
             return `<g class="layer" data-st="${st.id}" tabindex="0" role="button" aria-label="${esc(st.name)} state">
               <rect x="20" y="${y}" width="320" height="88" rx="20" fill="var(--${st.id})"/>
               <text x="40" y="${y + 36}" fill="${dark}" font-family="var(--f-display)" font-weight="800" font-size="22">${esc(st.name)}</text>
@@ -515,7 +511,7 @@
     const wheel = segs.map((m, i) => {
       const a0 = -Math.PI / 2 + (i / n) * 2 * Math.PI + gap, a1 = -Math.PI / 2 + ((i + 1) / n) * 2 * Math.PI - gap, am = (a0 + a1) / 2;
       const tx = cx + 132 * Math.cos(am), ty = cy + 132 * Math.sin(am);
-      const ink = m.section === "connection" ? "#2b1d00" : "var(--surface)";
+      const ink = "var(--on-state)";
       return `<g class="seg-g" data-m="${m.id}" tabindex="0" role="button" aria-label="${esc(m.power)} and ${esc(m.title)}"><path d="${arc(a0, a1)}" fill="${secColor[m.section]}"/>
         <text x="${tx}" y="${ty - 4}" text-anchor="middle" fill="${ink}" font-size="15">${esc(m.power)}</text>
         <text x="${tx}" y="${ty + 14}" text-anchor="middle" fill="${ink}" font-size="11" opacity=".85">${esc(m.title)}</text></g>`;
@@ -524,8 +520,9 @@
       <section class="section"><span class="eyebrow">Chapter 1 · The framework</span><h1>Seven Powers, seven skills</h1>
         <p class="lede muted prose">${esc(C.powersLede)}</p></section>
       <section class="card wheel-wrap">
-        <svg class="wheel" viewBox="0 0 420 420" role="img" aria-label="Wheel of the seven powers and skills">${wheel}
-          <circle cx="210" cy="210" r="62" fill="var(--surface-2)"/><text x="210" y="205" text-anchor="middle" fill="var(--ink)" font-size="16">Conscious</text><text x="210" y="224" text-anchor="middle" fill="var(--ink)" font-size="16">Adult</text></svg>
+        <svg class="wheel" viewBox="0 0 420 420" role="img" aria-label="Wheel of the seven powers and skills"><g class="spin">${wheel}</g>
+          <circle cx="210" cy="210" r="200" fill="none" stroke="var(--line)" stroke-dasharray="2 6"/>
+          <circle cx="210" cy="210" r="62" fill="var(--surface-solid)" stroke="var(--accent)" stroke-opacity=".5"/><text x="210" y="205" text-anchor="middle" fill="var(--ink)" font-size="16">Conscious</text><text x="210" y="224" text-anchor="middle" fill="var(--ink)" font-size="16">Adult</text></svg>
         <div class="power-detail" id="pd"><span class="eyebrow">Tap a segment</span><h3>Each power is a mindset for the adult. Each skill is what you do with children.</h3>
           <div class="pill-row"><span class="tag s">Safety</span><span class="tag e">Connection</span><span class="tag x">Problem solving</span></div></div>
       </section>
@@ -630,77 +627,172 @@
   }
 
   /* Real-life simulator */
+  const stateOf = (v) => (v < 34 ? "survival" : v < 67 ? "emotional" : "executive");
+  const stName = { survival: "Survival · Am I safe?", emotional: "Emotional · Am I loved?", executive: "Executive · What can I learn?" };
+  const BANDS = [["all", "All"], ["early", "Early years"], ["primary", "Primary"], ["secondary", "Secondary"], ["adult", "Adults & self"]];
+  function avatar(state, cls = "avatar") {
+    const col = `var(--${state})`;
+    const amp = state === "survival" ? 16 : state === "emotional" ? 8 : 3;
+    const n = state === "survival" ? 18 : 12;
+    let d = "";
+    for (let i = 0; i <= n * 2; i++) {
+      const a = (i / (n * 2)) * Math.PI * 2, r = 80 + (i % 2 ? amp : -amp / 2);
+      d += (i ? "L" : "M") + (100 + r * Math.cos(a)).toFixed(1) + " " + (100 + r * Math.sin(a)).toFixed(1);
+    }
+    const face = {
+      survival: `<circle cx="80" cy="92" r="9" fill="var(--ink)"/><circle cx="120" cy="92" r="9" fill="var(--ink)"/><circle cx="80" cy="92" r="3" fill="var(--surface-solid)"/><circle cx="120" cy="92" r="3" fill="var(--surface-solid)"/><path d="M66 74 L92 82 M134 74 L108 82" stroke="var(--ink)" stroke-width="5" stroke-linecap="round"/><ellipse cx="100" cy="128" rx="14" ry="10" fill="var(--ink)"/>`,
+      emotional: `<ellipse cx="80" cy="94" rx="7" ry="5" fill="var(--ink)"/><ellipse cx="120" cy="94" rx="7" ry="5" fill="var(--ink)"/><path d="M68 80 Q80 72 92 80 M108 80 Q120 72 132 80" stroke="var(--ink)" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M80 128 Q90 120 100 128 T120 128" stroke="var(--ink)" stroke-width="5" fill="none" stroke-linecap="round"/>`,
+      executive: `<path d="M72 94 Q80 86 88 94 M112 94 Q120 86 128 94" stroke="var(--ink)" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M80 120 Q100 138 120 120" stroke="var(--ink)" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="70" cy="112" r="7" fill="${col}" opacity=".35"/><circle cx="130" cy="112" r="7" fill="${col}" opacity=".35"/>`,
+    }[state];
+    return `<svg class="${cls} ${state}" viewBox="0 0 200 200" aria-hidden="true">
+      <path class="aura" d="${d}Z" fill="${col}" fill-opacity=".14" stroke="${col}" stroke-width="2" stroke-opacity=".8"/>
+      <circle cx="100" cy="100" r="58" fill="var(--surface-solid)" stroke="${col}" stroke-width="3"/>
+      ${face}</svg>`;
+  }
+  const C_LEN = 2 * Math.PI * 40;
+  const gauge = (id, label) => `<div class="gauge" style="position:relative" id="${id}"><svg viewBox="0 0 100 100" aria-hidden="true">
+      <circle cx="50" cy="50" r="40" fill="none" stroke="var(--surface-2)" stroke-width="8"/>
+      <circle class="fg" cx="50" cy="50" r="40" fill="none" stroke="var(--accent)" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C_LEN}" stroke-dashoffset="${C_LEN}" transform="rotate(-90 50 50)"/>
+      <text x="50" y="56" text-anchor="middle" fill="var(--ink)" font-family="var(--f-mono)" font-size="16" class="num">0</text></svg><span class="gv">${esc(label)}</span></div>`;
+  function setGauge(el, v, color) {
+    const fg = $(".fg", el);
+    fg.style.strokeDashoffset = C_LEN * (1 - v / 100);
+    fg.style.stroke = color;
+    $(".num", el).textContent = Math.round(v);
+  }
+  function popDelta(el, d) {
+    if (!d) return;
+    const x = h(`<span class="delta" style="top:-6px;right:-4px;color:var(${d > 0 ? "--good" : "--bad"})">${d > 0 ? "+" : ""}${d}</span>`);
+    el.appendChild(x);
+    setTimeout(() => x.remove(), 1200);
+  }
+  function typeText(el, text, done) {
+    if (reduced) { el.textContent = text; done(); return () => {}; }
+    let i = 0, stop = false;
+    el.classList.add("caret");
+    const tick = () => {
+      if (stop) return;
+      i = Math.min(text.length, i + 2);
+      el.textContent = text.slice(0, i);
+      if (i < text.length) setTimeout(tick, 16); else { el.classList.remove("caret"); done(); }
+    };
+    tick();
+    return () => { if (i < text.length) { stop = true; el.textContent = text; el.classList.remove("caret"); done(); } };
+  }
+
   function viewSim(simId) {
     const sim = C.sims.find((x) => x.id === simId);
     if (!sim) {
+      const band = S.simBand || "all";
+      const list = C.sims.filter((x) => band === "all" || x.band === band);
       mount(`
-        <section class="section"><span class="eyebrow">Practise</span><h1>Real-life simulator</h1>
-          <p class="lede muted prose">Branching classroom moments. Every choice moves two meters: your own composure and the child's brain state. Reach the top floor together to earn three stars.</p></section>
-        <div class="sim-list">${C.sims.map((x) => {
+        <section class="section"><span class="eyebrow">Practise · ${C.sims.length} missions</span><h1>Real-life <span class="grad">simulator</span></h1>
+          <p class="lede">Branching classroom moments. Every choice moves two gauges: your own composure and the other person's brain state. Bring everyone to the top floor to earn three stars.</p></section>
+        <div class="card section" style="gap:.8rem">
+          <div class="toggle-row"><span><b style="font-family:var(--f-display);font-weight:600">Pressure mode</b> <span class="muted" style="font-size:.85rem">· 20 seconds per decision, like real life. Bonus XP.</span></span>
+            <label class="switch"><input type="checkbox" id="pressure" ${S.pressure ? "checked" : ""} aria-label="Pressure mode"><span></span></label></div>
+          <div class="sim-filters" role="group" aria-label="Filter by age group">${BANDS.map(([v, l]) => `<button class="btn ghost small" type="button" data-band="${v}" aria-pressed="${band === v}">${l}</button>`).join("")}</div>
+        </div>
+        <div class="sim-list">${list.map((x) => {
           const best = S.sims[x.id] || 0;
-          return `<a class="sim-card" href="#sim-${x.id}" style="text-decoration:none;color:inherit"><span class="meta"><span class="tag">${esc(x.age)}</span><span class="stars" aria-label="${best} stars">${"★".repeat(best)}${"☆".repeat(3 - best)}</span></span><h3>${esc(x.title)}</h3><p class="muted">${esc(x.blurb)}</p><span class="meta"><span>Skills: ${esc(x.skills)}</span>${icon("play")}</span></a>`;
-        }).join("")}</div>`, () => award("visit:sim", 10, "Opened the simulator"));
+          return `<a class="sim-card tilt" href="#sim-${x.id}">
+            <div class="top">${avatar(stateOf(x.childStart ?? 30), "mini-face")}<div style="display:grid;gap:.25rem;min-width:0"><h3>${esc(x.title)}</h3><span class="tag">${esc(x.age)}</span></div></div>
+            <p class="muted" style="font-size:.9rem">${esc(x.blurb)}</p>
+            <span class="meta"><span>Difficulty <span class="pips" aria-label="difficulty ${x.level} of 3">${[1, 2, 3].map((k) => `<i class="${k <= x.level ? "on" : ""}"></i>`).join("")}</span></span><span class="stars" aria-label="${best} stars">${"★".repeat(best)}${"☆".repeat(3 - best)}</span></span>
+            <span class="meta"><span>${esc(x.skills)}</span>${icon("play")}</span></a>`;
+        }).join("")}</div>`, (s) => {
+        award("visit:sim", 10, "Opened the simulator");
+        $("#pressure", s).addEventListener("change", (e) => { S.pressure = e.target.checked; save(); toast(S.pressure ? "Pressure mode on: 20 seconds per decision" : "Pressure mode off"); });
+        $$("[data-band]", s).forEach((b) => b.addEventListener("click", () => { S.simBand = b.dataset.band; save(); viewSim(); }));
+      });
       return;
     }
-    let node = sim.start, comp = 70, child = sim.childStart ?? 30;
+    let node = sim.start, comp = 70, child = sim.childStart ?? 30, token = 0, timerRaf = 0;
     const path = [];
-    const stateOf = (v) => (v < 34 ? "survival" : v < 67 ? "emotional" : "executive");
-    const stName = { survival: "Survival · Am I safe?", emotional: "Emotional · Am I loved?", executive: "Executive · What can I learn?" };
-    mount(`<section class="section"><a href="#sim" class="muted">← All scenarios</a><span class="eyebrow">${esc(sim.age)} · ${esc(sim.skills)}</span><h1>${esc(sim.title)}</h1></section>
-      <div class="card section">
-        <div class="sim-top">
-          <div class="meter"><div class="lv"><span>Your composure</span><span id="cv"></span></div><div class="bar"><i id="cb"></i></div></div>
-          <div class="meter child"><div class="lv"><span>Child's state</span><span id="chv"></span></div><div class="bar"><i id="chb"></i></div></div>
-        </div>
-        <div id="scene" class="scene" aria-live="polite"></div>
-      </div>`, (s) => {
-      const meters = () => {
-        $("#cv", s).textContent = comp + "%";
-        $("#cb", s).style.width = comp + "%";
-        $("#cb", s).style.background = comp < 40 ? "var(--survival)" : comp < 70 ? "var(--emotional)" : "linear-gradient(90deg,var(--accent),var(--accent-2))";
+    mount(`<section class="section" style="gap:.5rem"><a href="#sim" class="muted" style="font-size:.85rem">← All missions</a><span class="eyebrow">${esc(sim.age)} · ${esc(sim.skills)}${S.pressure ? " · Pressure mode" : ""}</span><h1>${esc(sim.title)}</h1></section>
+      <div class="card sim-hud">
+        ${gauge("gComp", "Your composure")}
+        <div class="avatar-wrap"><div id="av"></div><span class="avatar-name">${esc(sim.who || "Child")}</span><div id="chv"></div></div>
+        ${gauge("gChild", sim.meter || "Child's state")}
+      </div>
+      <div class="card section"><div class="timer" id="timer" ${S.pressure ? "" : "hidden"}><i></i></div><div id="scene" class="scene" aria-live="polite"></div></div>`, (s) => {
+      const av = $("#av", s), gC = $("#gComp", s), gK = $("#gChild", s);
+      const meters = (dc, dk) => {
         const st = stateOf(child);
+        setGauge(gC, comp, comp < 40 ? "var(--survival)" : comp < 70 ? "var(--emotional)" : "var(--accent)");
+        setGauge(gK, child, `var(--${st})`);
+        av.innerHTML = avatar(st);
         $("#chv", s).innerHTML = `<span class="state-pill ${st}">${stName[st]}</span>`;
-        $("#chb", s).style.width = Math.max(4, child) + "%";
-        $("#chb", s).style.backgroundPosition = `${child}% 0`;
+        popDelta(gC, dc); popDelta(gK, dk);
+      };
+      const stopTimer = () => { cancelAnimationFrame(timerRaf); const t = $("#timer i", s); if (t) t.style.transform = "scaleX(1)"; };
+      const startTimer = (my, onOut) => {
+        if (!S.pressure) return;
+        const bar = $("#timer i", s), t0 = performance.now(), dur = 20000;
+        const f = (t) => {
+          if (my !== token) return;
+          const k = Math.min(1, (t - t0) / dur);
+          bar.style.transform = `scaleX(${1 - k})`;
+          if (k < 1) timerRaf = requestAnimationFrame(f); else onOut();
+        };
+        timerRaf = requestAnimationFrame(f);
       };
       const draw = () => {
+        const my = ++token;
+        stopTimer();
         const n = sim.nodes[node];
         meters();
+        const box = $("#scene", s);
         if (n.end) {
+          $("#timer", s).hidden = true;
           const st = stateOf(child);
           const stars = n.stars ?? (st === "executive" && comp >= 60 ? 3 : st !== "survival" && comp >= 40 ? 2 : 1);
           if (stars > (S.sims[sim.id] || 0)) { S.sims[sim.id] = stars; save(); }
           award(`sim:${sim.id}:${stars}`, stars * 20, `${sim.title}: ${stars} star${stars > 1 ? "s" : ""}`);
+          if (S.pressure && stars >= 2) award(`simP:${sim.id}`, 30, "Held steady under pressure");
           if (stars === 3) confetti();
-          $("#scene", s).innerHTML = `<div class="section" style="justify-items:start">
-            <span class="eyebrow">Ending</span><h2>${esc(n.title)}</h2><div class="stars" style="font-size:1.6rem">${"★".repeat(stars)}${"☆".repeat(3 - stars)}</div>
+          box.innerHTML = `<div class="section" style="justify-items:start">
+            <span class="eyebrow">Mission debrief</span><h2>${esc(n.title)}</h2><div class="stars" style="font-size:1.8rem">${"★".repeat(stars)}${"☆".repeat(3 - stars)}</div>
             <p class="scene-text">${esc(n.text)}</p>
-            <div class="explain"><b>What the book teaches here</b><p>${esc(n.lesson)}</p></div>
-            ${path.length ? `<div class="section" style="gap:.4rem;width:100%"><span class="eyebrow">Your path</span>${pipeline({ title: "Your choices", steps: path.map((p, i) => ({ k: "Choice " + (i + 1), t: p.t, s: p.fb })) })}</div>` : ""}
-            <div class="pill-row"><button class="btn" type="button" data-replay>${icon("reset")} Play again</button><a class="btn ghost" href="#sim">More scenarios</a></div></div>`;
-          $("[data-replay]", s).addEventListener("click", () => { node = sim.start; comp = 70; child = sim.childStart ?? 30; path.length = 0; draw(); });
+            <div class="explain" style="width:100%"><b>What the book teaches here</b><p>${esc(n.lesson)}</p></div>
+            ${path.length ? `<div class="section" style="gap:.4rem;width:100%"><span class="eyebrow">Your decision path</span>${pipeline({ title: "Your choices", steps: path.map((p, i) => ({ k: (p.good ? "✓ " : "✕ ") + "Choice " + (i + 1), t: p.t, s: p.fb })) })}</div>` : ""}
+            <div class="pill-row"><button class="btn" type="button" data-replay>${icon("reset")} Play again</button><a class="btn ghost" href="#sim">More missions</a></div></div>`;
+          $("[data-replay]", s).addEventListener("click", () => { node = sim.start; comp = 70; child = sim.childStart ?? 30; path.length = 0; $("#timer", s).hidden = !S.pressure; draw(); });
           return;
         }
-        $("#scene", s).innerHTML = `
-          <p class="scene-text">${esc(n.text)}</p>
-          ${n.child ? `<div class="child-line">${esc(n.child)}</div>` : ""}
-          ${n.hint ? `<p class="muted" style="font-size:.9rem">${icon("eye")} ${esc(n.hint)}</p>` : ""}
-          <div class="options">${n.choices.map((c, k) => `<button class="opt" type="button" data-k="${k}"><span class="key">${"ABCD"[k]}</span><span>${esc(c.t)}</span></button>`).join("")}</div>
-          <div data-fb></div>`;
-        $$(".opt", s).forEach((b) => b.addEventListener("click", () => {
+        box.innerHTML = `<p class="scene-text" id="st"></p><div data-rest hidden>
+          ${n.child ? `<div class="child-line" style="margin-bottom:1rem">${esc(n.child)}</div>` : ""}
+          ${n.hint ? `<p class="muted" style="font-size:.88rem;margin-bottom:1rem">${icon("eye")} ${esc(n.hint)}</p>` : ""}
+          <div class="options fade-in">${n.choices.map((c, k) => `<button class="opt" type="button" data-k="${k}"><span class="key">${"ABCD"[k]}</span><span>${esc(c.t)}</span></button>`).join("")}</div>
+          <div data-fb style="margin-top:1rem"></div></div>`;
+        const rest = $("[data-rest]", box);
+        const skip = typeText($("#st", box), n.text, () => {
+          if (my !== token) return;
+          rest.hidden = false;
+          rest.style.display = "grid";
+          startTimer(my, () => {
+            comp = Math.max(0, comp - 15); child = Math.max(0, child - 10); meters(-15, -10);
+            $("[data-fb]", box).innerHTML = `<div class="explain"><b style="color:var(--bad)">Time's up</b><p>Hesitation reads as uncertainty, and the moment escalates. Take a S.T.A.R. breath and choose.</p></div>`;
+          });
+        });
+        $("#st", box).addEventListener("click", skip);
+        $$(".opt", box).forEach((b) => b.addEventListener("click", () => {
+          token++; stopTimer();
           const c = n.choices[+b.dataset.k];
-          comp = Math.max(0, Math.min(100, comp + (c.comp || 0)));
-          child = Math.max(0, Math.min(100, child + (c.child || 0)));
-          path.push({ t: c.t, fb: c.fb });
-          $$(".opt", s).forEach((x) => (x.disabled = true));
+          const dc = c.comp || 0, dk = c.child || 0;
+          comp = Math.max(0, Math.min(100, comp + dc));
+          child = Math.max(0, Math.min(100, child + dk));
+          path.push({ t: c.t, fb: c.fb, good: c.good });
+          $$(".opt", box).forEach((x) => (x.disabled = true));
           b.classList.add(c.good ? "right" : "wrong");
-          meters();
-          $("[data-fb]", s).innerHTML = `<div class="explain"><b style="color:var(${c.good ? "--good" : "--bad"})">${c.good ? "Helpful move" : "That raises the alarm"}</b><p>${esc(c.fb)}</p><div><button class="btn small" type="button">Continue ${icon("chev")}</button></div></div>`;
-          const btn = $("[data-fb] button", s);
+          meters(dc, dk);
+          $("[data-fb]", box).innerHTML = `<div class="explain"><b style="color:var(${c.good ? "--good" : "--bad"})">${c.good ? "Helpful move" : "That raises the alarm"}</b><p>${esc(c.fb)}</p><div><button class="btn small" type="button">Continue ${icon("chev")}</button></div></div>`;
+          const btn = $("[data-fb] button", box);
           btn.addEventListener("click", () => { node = c.next; draw(); });
           btn.focus({ preventScroll: true });
         }));
       };
+      window.addEventListener("hashchange", () => { token++; stopTimer(); }, { once: true });
       draw();
     });
   }
@@ -748,7 +840,7 @@
       <p class="lede muted prose">${esc(C.calmLede)}</p></section>
       <div class="card section">
         <div class="breath-pick" role="group" aria-label="Choose a calming exercise">${ex.map((e, i) => `<button class="btn ghost small" type="button" data-b="${i}" aria-pressed="${i === 0}">${esc(e.name)}</button>`).join("")}</div>
-        <div class="breath-stage"><div class="breath-orb" id="orb">Ready</div><p id="bdesc" class="muted prose" style="text-align:center"></p>
+        <div class="breath-stage"><div class="breath-orb-wrap"><div class="breath-orb" id="orb">Ready</div></div><p id="bdesc" class="muted prose" style="text-align:center"></p>
           <div class="pill-row"><button class="btn" type="button" id="bgo">${icon("play")} Start 3 rounds</button></div></div>
       </div>
       <section class="grid">${ex.map((e) => `<div class="card section"><h3>${esc(e.name)}</h3><p class="muted">${esc(e.how)}</p><span class="tag">${esc(e.use)}</span></div>`).join("")}</section>
@@ -820,7 +912,7 @@
     const simStars = Object.values(S.sims).reduce((a, b) => a + b, 0);
     mount(`<section class="section"><span class="eyebrow">Your journey</span><h1>My progress</h1></section>
       <div class="stats">
-        <div class="stat"><b>${S.xp}</b><span>Total XP</span></div>
+        <div class="stat"><b data-count="${S.xp}">${S.xp}</b><span>Total XP</span></div>
         <div class="stat"><b>${L.i + 1}</b><span>Level · ${esc(L.cur.title)}</span></div>
         <div class="stat"><b>${mods}/${C.modules.length}</b><span>Modules mastered</span></div>
         <div class="stat"><b>${quizBest}</b><span>Best responses chosen</span></div>
@@ -837,7 +929,7 @@
   }
   function medal(b) {
     const col = { safety: "var(--survival)", connection: "var(--emotional)", problem: "var(--executive)", gold: "var(--accent-2)", core: "var(--accent)" }[b.color || "core"];
-    return `<svg class="medal" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 4h10l4 14H24zM34 4h10l-4 14H30z" fill="var(--line)"/><circle cx="32" cy="38" r="22" fill="${col}"/><circle cx="32" cy="38" r="16" fill="none" stroke="var(--surface)" stroke-width="2" stroke-dasharray="3 3"/><g transform="translate(20 26)" stroke="var(--surface)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><svg viewBox="0 0 24 24" width="24" height="24">${P[b.icon] || P.star}</svg></g></svg>`;
+    return `<svg class="medal" viewBox="0 0 64 64" aria-hidden="true"><path d="M20 4h10l4 14H24zM34 4h10l-4 14H30z" fill="var(--line)"/><circle cx="32" cy="38" r="22" fill="${col}"/><circle cx="32" cy="38" r="16" fill="none" stroke="var(--on-state)" stroke-opacity=".6" stroke-width="2" stroke-dasharray="3 3"/><g transform="translate(20 26)" stroke="var(--on-state)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><svg viewBox="0 0 24 24" width="24" height="24">${P[b.icon] || P.star}</svg></g></svg>`;
   }
 
   /* ---------- Router ---------- */
@@ -882,6 +974,73 @@
   });
   document.addEventListener("click", (e) => { if (!pop.hidden && !pop.contains(e.target)) { pop.hidden = true; themeBtn.setAttribute("aria-expanded", "false"); } });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !pop.hidden) { pop.hidden = true; themeBtn.focus(); } });
+
+  /* ---------- Living neural network background ---------- */
+  (function neural() {
+    if (reduced) return;
+    const cv = document.createElement("canvas");
+    cv.id = "neural";
+    cv.setAttribute("aria-hidden", "true");
+    document.body.prepend(cv);
+    const ctx = cv.getContext("2d");
+    let W, H, nodes = [], pulses = [], mx = -1e3, my = -1e3;
+    const cols = {}, dpr = Math.min(2, window.devicePixelRatio || 1);
+    const readCols = () => { const cs = getComputedStyle(root); ["--accent", "--accent-2", "--accent-3"].forEach((k) => (cols[k] = cs.getPropertyValue(k).trim())); };
+    const resize = () => {
+      W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const count = Math.round(Math.min(90, (W * H) / 16000));
+      nodes = Array.from({ length: count }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .25, vy: (Math.random() - .5) * .25, r: Math.random() * 1.8 + .8 }));
+    };
+    readCols(); resize();
+    window.addEventListener("resize", resize, { passive: true });
+    window.addEventListener("cd-theme", readCols);
+    window.addEventListener("pointermove", (e) => { mx = e.clientX; my = e.clientY; }, { passive: true });
+    const D = 130;
+    (function frame() {
+      requestAnimationFrame(frame);
+      if (document.hidden) return;
+      ctx.clearRect(0, 0, W, H);
+      for (const n of nodes) {
+        n.x += n.vx; n.y += n.vy;
+        if (n.x < 0 || n.x > W) n.vx *= -1;
+        if (n.y < 0 || n.y > H) n.vy *= -1;
+        const dx = n.x - mx, dy = n.y - my;
+        if (dx * dx + dy * dy < 14000) { n.x += dx * .012; n.y += dy * .012; }
+      }
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = cols["--accent-3"];
+      for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i], b = nodes[j], d = Math.hypot(a.x - b.x, a.y - b.y);
+        if (d < D) {
+          ctx.globalAlpha = (1 - d / D) * .35;
+          ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          if (Math.random() < .0009 && pulses.length < 14) pulses.push({ a, b, t: 0, c: Math.random() < .5 ? cols["--accent"] : cols["--accent-2"] });
+        }
+      }
+      ctx.globalAlpha = .9;
+      ctx.fillStyle = cols["--accent"];
+      for (const n of nodes) { ctx.beginPath(); ctx.arc(n.x, n.y, n.r, 0, 6.283); ctx.fill(); }
+      pulses = pulses.filter((p) => p.t <= 1);
+      for (const p of pulses) {
+        p.t += .02;
+        const x = p.a.x + (p.b.x - p.a.x) * p.t, y = p.a.y + (p.b.y - p.a.y) * p.t;
+        ctx.globalAlpha = 1; ctx.fillStyle = p.c; ctx.shadowColor = p.c; ctx.shadowBlur = 12;
+        ctx.beginPath(); ctx.arc(x, y, 2.6, 0, 6.283); ctx.fill(); ctx.shadowBlur = 0;
+      }
+      ctx.globalAlpha = 1;
+    })();
+  })();
+
+  /* Cursor spotlight on glass panels, and a gentle 3D tilt on cards */
+  document.addEventListener("pointermove", (e) => {
+    if (!e.target.closest) return;
+    const el = e.target.closest(".card, .stop, .sim-card, .def");
+    if (el) { const r = el.getBoundingClientRect(); el.style.setProperty("--mx", e.clientX - r.left + "px"); el.style.setProperty("--my", e.clientY - r.top + "px"); }
+    if (reduced || e.pointerType !== "mouse") return;
+    const t = e.target.closest(".stop, .tilt");
+    if (t) { const r = t.getBoundingClientRect(); const px = (e.clientX - r.left) / r.width - .5, py = (e.clientY - r.top) / r.height - .5; t.style.transform = `perspective(700px) rotateY(${px * 8}deg) rotateX(${-py * 8}deg) translateY(-3px)`; }
+  }, { passive: true });
+  document.addEventListener("pointerout", (e) => { const t = e.target.closest && e.target.closest(".stop, .tilt"); if (t && !t.contains(e.relatedTarget)) t.style.transform = ""; });
 
   bumpStreak();
   renderHud();

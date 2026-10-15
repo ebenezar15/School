@@ -10,11 +10,12 @@ An interactive, gamified learning app based on *Conscious Discipline: Building R
 - **Brain State Model**: an interactive three-floor model and a "state elevator" you can push up and down
 - **Seven Powers & Skills wheel** and framework tree
 - **10 modules** (one per chapter), each with: core idea, concept tree, key terms, flowcharts and pipelines, psychology, examples, scripts, structures, do's and don'ts with a sorting game, and a scenario challenge
-- **Real-life simulator**: 5 branching classroom scenarios with composure and child-state meters
+- **Real-life simulator**: 14 branching missions across early years, primary, secondary and adult situations (angry parent, your own bad day), with animated composure and state gauges, a reacting avatar, typewriter scenes, difficulty levels, age filters and an optional 20-second pressure mode
 - **Spot the state** speed game and a **calming corner** with animated breathing exercises
 - **Teaching strategies**: roll-out plan, daily rhythm, month-by-month plan, strategies with the reasoning behind them, lesson ideas, set-up checklist and colleague coaching
 - **Gamification**: XP, 7 levels, 16 badges, daily check-in and streaks
-- **6 colour themes** plus light/dark mode
+- **Futuristic animated design**: live neural-network background, holographic 3D brain-floor hero, glass panels with cursor spotlight, card tilt, scan transitions
+- **6 colour themes** (Neural, Synthwave, Solar flare, Deep ocean, Aurora light, High contrast) plus light/dark mode
 
 Progress is saved in the browser only.
 
