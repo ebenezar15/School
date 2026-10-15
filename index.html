@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Conscious Discipline Studio</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="An interactive, gamified studio for learning Conscious Discipline: brain states, the seven skills, scripts, flowcharts, simulations and teaching strategies.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Gabarito:wght@500;600;700;800&family=Kalam:wght@400;700&display=swap">
+<link rel="stylesheet" href="app/styles.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#home" aria-label="Conscious Discipline Studio, home">
+    <svg class="brand-mark" viewBox="0 0 34 34" aria-hidden="true">
+      <rect x="3" y="3" width="28" height="8.5" rx="3" fill="var(--executive)"/>
+      <rect x="3" y="12.75" width="28" height="8.5" rx="3" fill="var(--emotional)"/>
+      <rect x="3" y="22.5" width="28" height="8.5" rx="3" fill="var(--survival)"/>
+    </svg>
+    <span class="brand-name">Conscious Discipline<small>STUDIO · learn, practise, teach</small></span>
+  </a>
+  <div class="hud">
+    <div class="hud-level" aria-live="polite"><div class="lv"><span id="lvTitle">Lv 1</span><span id="lvXp">0 XP</span></div><div class="bar"><i id="lvBar"></i></div></div>
+    <a class="chip" id="streak" href="#progress" style="text-decoration:none;color:inherit">0</a>
+    <a class="chip" id="badgeCount" href="#progress" style="text-decoration:none;color:inherit">0</a>
+    <button class="icon-btn" id="themeBtn" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="themePop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5S14 15 15 15h2a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10" cy="7" r="1"/><circle cx="15" cy="7.5" r="1"/></svg>Theme</button>
+  </div>
+  <div class="theme-pop" id="themePop" hidden></div>
+</header>
+<div class="shell">
+  <nav class="rail" id="rail" aria-label="Modules"></nav>
+  <main class="stage" id="stage"></main>
+</div>
+<script src="app/content.js"></script>
+<script src="app/app.js"></script>
+</body>
+</html>
