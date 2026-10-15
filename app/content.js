@@ -1743,6 +1743,80 @@ window.CD_CONTENT = (function () {
     { id: "master", name: "Conscious Leader", desc: "Master all ten modules", icon: "trophy", color: "gold", test: (S, C) => C.modules.every((m) => S.earned[m.id + ":mastered"]) },
   ];
 
+  /* Animated explainer scripts: a = teacher state, c = child state, fx = visual effect */
+  const EX = {
+    m1: { who: "Jaylen", scenes: [
+      { a: "executive", c: "emotional", fx: "bolt", cap: "Stimulus: Jaylen shoves a classmate to get the last marker.", cs: "Mine!" },
+      { a: "emotional", c: "emotional", fx: "question", cap: "The adult's old recording wants to react on autopilot.", as: "Right, card to red—" },
+      { a: "executive", c: "emotional", fx: "breath", cap: "Pause. One S.T.A.R. breath widens the gap between stimulus and response.", as: "I'm safe. I can handle this." },
+      { a: "executive", c: "executive", fx: "bulb", cap: "Response: the conflict becomes the curriculum. Teach the missing skill.", as: "You wanted the marker. When you want a turn, say “May I have it next?”" },
+      { a: "executive", c: "executive", fx: "spark", cap: "Jaylen leaves with a skill instead of a punishment.", cs: "May I have it next?" },
+    ] },
+    m2: { who: "Jacob", scenes: [
+      { a: "executive", c: "survival", fx: "bolt", cap: "A threat sends Jacob to the basement: fight, flight or freeze.", cs: "NO! Go away!" },
+      { a: "executive", c: "survival", fx: "breath", cap: "Step 1 · Regulate yourself first.", as: "Breathe in… and out." },
+      { a: "executive", c: "survival", fx: "shield", cap: "Step 2 · Physical behaviour means survival state. Offer safety.", as: "You're safe. Breathe with me." },
+      { a: "executive", c: "emotional", fx: "heart", cap: "Step 3 · He climbs to the emotional floor. Offer connection.", as: "You seem angry. You wanted more time.", cs: "I did…" },
+      { a: "executive", c: "executive", fx: "bulb", cap: "Step 4 · Top floor reached. Only now can he learn a new skill.", as: "Next time, say “I need a minute.”" },
+    ] },
+    m3: { who: "Kai", scenes: [
+      { a: "executive", c: "emotional", fx: "question", cap: "A child arrives asking two silent questions: Am I safe? Am I loved?" },
+      { a: "executive", c: "emotional", fx: "shield", cap: "Routines answer “Am I safe?” Picture steps show exactly what happens next.", as: "Here's our morning: bag, greeting, job." },
+      { a: "executive", c: "executive", fx: "heart", cap: "Rituals answer “Am I loved?” A daily greeting says you belong here.", as: "High five, wave or fist bump?", cs: "Fist bump!" },
+      { a: "executive", c: "executive", fx: "bulb", cap: "Structures answer “What can I learn?” A real job makes him part of the family.", as: "You're our plant waterer this week." },
+      { a: "executive", c: "executive", fx: "spark", cap: "Belonging, not stickers, is what makes children willing to learn." },
+    ] },
+    m4: { who: "Tyler", scenes: [
+      { a: "executive", c: "emotional", fx: "bolt", cap: "Trigger: Tyler shouts and shoves his worksheet off the desk.", cs: "You can't make me!" },
+      { a: "emotional", c: "emotional", fx: "question", cap: "A trigger thought fires: “He's doing this to embarrass me.”" },
+      { a: "executive", c: "emotional", fx: "breath", cap: "Upload calm: S.T.A.R. and the mantra.", as: "I'm safe. Keep breathing. I can handle this." },
+      { a: "executive", c: "emotional", fx: "waves", cap: "Download calm: mirror his body, then breathe when he looks at you.", as: "Your arms are going like this." },
+      { a: "executive", c: "executive", fx: "spark", cap: "His mirror neurons follow your calm. Now you can teach.", cs: "…okay." },
+    ] },
+    m5: { who: "Devon", scenes: [
+      { a: "emotional", c: "emotional", fx: "light", label: "DON'T RUN!", bad: true, cap: "The flashlight of attention points at what you don't want.", as: "Don't run!" },
+      { a: "executive", c: "emotional", fx: "breath", cap: "Pivot: breathe, and ask “Do I want more of this?”" },
+      { a: "executive", c: "emotional", fx: "light", label: "WALK LIKE THIS", cap: "Shine the light on what you do want. Name, verb, paint.", as: "Devon, walk like this, so everyone is safe." },
+      { a: "executive", c: "executive", fx: "spark", cap: "Notice the success straight away.", as: "You did it!" },
+    ] },
+    m6: { who: "Priya", scenes: [
+      { a: "executive", c: "executive", fx: "heart", cap: "Priya helps a classmate pick up spilled crayons." },
+      { a: "emotional", c: "emotional", fx: "question", cap: "“Good girl!” is a judgment. It teaches her to please you.", as: "Good girl!" },
+      { a: "executive", c: "executive", fx: "waves", cap: "Noticing describes what she did and how it helped. A camera could record it.", as: "You picked up Sam's crayons so he could keep drawing. That was helpful." },
+      { a: "executive", c: "executive", fx: "spark", cap: "Contribution, not specialness, builds belonging.", cs: "He can draw now!" },
+    ] },
+    m7: { who: "Mara", scenes: [
+      { a: "executive", c: "emotional", fx: "bolt", cap: "Cleanup time. Mara refuses.", cs: "No! You can't make me!" },
+      { a: "executive", c: "emotional", fx: "breath", cap: "Breathe and picture the behaviour you want." },
+      { a: "executive", c: "emotional", fx: "choices", opts: ["Long blocks", "Small blocks"], cap: "Offer two positive choices. Both reach your goal.", as: "You have a choice! Which is better for you?" },
+      { a: "executive", c: "executive", fx: "bulb", cap: "Choosing switches on her thinking brain and gives her some power.", cs: "Long ones." },
+      { a: "executive", c: "executive", fx: "spark", cap: "Notice the choice.", as: "You chose the long blocks! Good for you!" },
+    ] },
+    m8: { who: "Melissa", scenes: [
+      { a: "executive", c: "survival", fx: "bolt", cap: "Basement: Melissa is kicking and screaming after her tower fell." },
+      { a: "executive", c: "survival", fx: "waves", cap: "D · Describe her body and download calm.", as: "Your legs are kicking like this." },
+      { a: "executive", c: "emotional", fx: "heart", cap: "N · Name the feeling as a gentle guess.", as: "You seem so disappointed?" },
+      { a: "executive", c: "executive", fx: "bulb", cap: "A · Acknowledge the wish, straight away.", as: "You were hoping it would stay up.", cs: "I worked so hard…" },
+      { a: "executive", c: "executive", fx: "ball", cap: "Hand the beach ball back: the feeling is hers to manage, with your support." },
+    ] },
+    m9: { who: "Leo", scenes: [
+      { a: "executive", c: "emotional", fx: "bolt", cap: "Leo pushes Malik out of the way.", cs: "Move!" },
+      { a: "emotional", c: "emotional", fx: "split", opts: ["Mean kid", "Missing skill"], cap: "Your perception decides your response. Choose the lens." },
+      { a: "executive", c: "emotional", fx: "heart", cap: "Positive intent first.", as: "You wanted Malik to move, so you pushed. You didn't know what else to do." },
+      { a: "executive", c: "executive", fx: "bulb", cap: "Limit, then the new skill, practised now.", as: "You may not push. Say “Move, please.” Say it now.", cs: "Move, please." },
+      { a: "executive", c: "executive", fx: "spark", cap: "Encourage both children and repair with a high five." },
+    ] },
+    m10: { who: "Kenji", scenes: [
+      { a: "emotional", c: "survival", fx: "throw", cap: "Intention to punish: the adult throws the beach ball hard. The child learns to blame.", as: "Now you've lost the next lab too!" },
+      { a: "emotional", c: "emotional", fx: "hold", cap: "Intention to save: the adult holds the ball. The child never feels the consequence.", as: "Fine, one more chance." },
+      { a: "executive", c: "emotional", fx: "ball", cap: "Intention to teach: hand the ball back gently with a related consequence.", as: "I can see you've chosen the observation table." },
+      { a: "executive", c: "emotional", fx: "heart", cap: "Empathy during the backlash, never a lecture.", cs: "This is so unfair!", as: "You were hoping to finish with your group. It's hard." },
+      { a: "executive", c: "executive", fx: "bulb", cap: "The feeling stays with him, so he reflects and changes." },
+    ] },
+  };
+  modules.forEach((m) => { m.explainer = EX[m.id]; });
+  brain.explainer = EX.m2;
+
   return {
     sections, levels, modules, brain, identify, breathing, sims, teach, checkin, palettes, badges,
     intro: {

@@ -324,6 +324,8 @@
     s.innerHTML = `<div class="stage-inner view-enter">${html}</div>`;
     window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
     wireTrees(s);
+    wireExplainers(s);
+    wireHair(s);
     if (!reduced) { const sc = h('<div class="scan" aria-hidden="true"></div>'); document.body.appendChild(sc); setTimeout(() => sc.remove(), 750); }
     after && after(s);
     $$("[data-count]", s).forEach((el) => countUp(el, +el.dataset.count));
@@ -366,7 +368,7 @@
       <section class="section">
         <div class="section-head"><div class="prose"><span class="eyebrow">The big picture</span><h2>How the whole approach fits together</h2></div></div>
         <div class="grid-2">
-          <div class="card section"><h3>The pyramid, bottom to top</h3>${pipeline(C.intro.pyramid)}</div>
+          <div class="card section"><h3>The pyramid, bottom to top</h3><div class="hl" data-hair="stack"></div>${pipeline(C.intro.pyramid)}</div>
           <div class="card section"><h3>Old model vs. new model</h3>
             <div class="dd">${C.intro.compare.map((c) => `<div class="def"><b>${esc(c.k)}</b><span><span class="tag s">Traditional</span> ${esc(c.old)}</span><span><span class="tag x">Conscious</span> ${esc(c.neu)}</span></div>`).join("")}</div></div>
         </div>
@@ -403,6 +405,11 @@
         <h1>The Brain State Model</h1>
         <p class="lede muted prose">${esc(B.lede)}</p>
       </section>
+      <section class="grid-2" style="align-items:stretch">
+        <div class="card section"><span class="eyebrow">Graphic · the iceberg</span><h3>What you see is not what drives it</h3>${iceberg()}</div>
+        <div class="card section"><span class="eyebrow">Interactive · ride the floors</span><h3>Point high to climb, low to drop</h3><div class="hl" data-hair="elevator"></div></div>
+      </section>
+      ${explainer(B.explainer, "brain")}
       <section class="card brain-wrap">
         <svg class="brain-svg" viewBox="0 0 360 330" role="img" aria-label="Interactive three-floor model of brain states">
           ${B.states.map((st, i) => {
@@ -571,6 +578,7 @@
         const p = $("#panel", s);
         p.innerHTML = `<div class="panel" role="tabpanel">${panel(m, id)}</div>`;
         wireTrees(p);
+        wireExplainers(p);
         if (id === "dodont") sorter($("[data-sorter]", p), m);
         if (id === "challenge") quiz($("[data-quiz]", p), m.quiz, (sc, tot) => {
           const first = !(S.quiz[m.id] && S.quiz[m.id].done);
@@ -594,6 +602,7 @@
 
   function panel(m, id) {
     if (id === "learn") return `
+      ${m.explainer ? explainer(m.explainer, m.id) : ""}
       <div class="grid-2">
         <div class="card section"><span class="eyebrow">Core idea</span><div class="prose">${m.core.map((p) => `<p>${esc(p)}</p>`).join("")}</div>
           ${m.keyScript ? `<div class="say">${esc(m.keyScript)}</div>` : ""}</div>
@@ -631,6 +640,9 @@
   const stName = { survival: "Survival · Am I safe?", emotional: "Emotional · Am I loved?", executive: "Executive · What can I learn?" };
   const BANDS = [["all", "All"], ["early", "Early years"], ["primary", "Primary"], ["secondary", "Secondary"], ["adult", "Adults & self"]];
   function avatar(state, cls = "avatar") {
+    return `<svg class="${cls} ${state}" viewBox="0 0 200 200" aria-hidden="true">${avatarInner(state)}</svg>`;
+  }
+  function avatarInner(state) {
     const col = `var(--${state})`;
     const amp = state === "survival" ? 16 : state === "emotional" ? 8 : 3;
     const n = state === "survival" ? 18 : 12;
@@ -644,10 +656,9 @@
       emotional: `<ellipse cx="80" cy="94" rx="7" ry="5" fill="var(--ink)"/><ellipse cx="120" cy="94" rx="7" ry="5" fill="var(--ink)"/><path d="M68 80 Q80 72 92 80 M108 80 Q120 72 132 80" stroke="var(--ink)" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M80 128 Q90 120 100 128 T120 128" stroke="var(--ink)" stroke-width="5" fill="none" stroke-linecap="round"/>`,
       executive: `<path d="M72 94 Q80 86 88 94 M112 94 Q120 86 128 94" stroke="var(--ink)" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M80 120 Q100 138 120 120" stroke="var(--ink)" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="70" cy="112" r="7" fill="${col}" opacity=".35"/><circle cx="130" cy="112" r="7" fill="${col}" opacity=".35"/>`,
     }[state];
-    return `<svg class="${cls} ${state}" viewBox="0 0 200 200" aria-hidden="true">
-      <path class="aura" d="${d}Z" fill="${col}" fill-opacity=".14" stroke="${col}" stroke-width="2" stroke-opacity=".8"/>
+    return `<path class="aura" d="${d}Z" fill="${col}" fill-opacity=".14" stroke="${col}" stroke-width="2" stroke-opacity=".8"/>
       <circle cx="100" cy="100" r="58" fill="var(--surface-solid)" stroke="${col}" stroke-width="3"/>
-      ${face}</svg>`;
+      ${face}`;
   }
   const C_LEN = 2 * Math.PI * 40;
   const gauge = (id, label) => `<div class="gauge" style="position:relative" id="${id}"><svg viewBox="0 0 100 100" aria-hidden="true">
@@ -794,6 +805,179 @@
       };
       window.addEventListener("hashchange", () => { token++; stopTimer(); }, { once: true });
       draw();
+    });
+  }
+
+  /* ---------- Animated explainers: teacher and child on a stage, scene by scene ---------- */
+  const AX = { x: 50, y: 95, s: 160 }, CX = { x: 395, y: 115, s: 135 };
+  const ac = { x: AX.x + AX.s / 2, y: AX.y + AX.s / 2 }, cc = { x: CX.x + CX.s / 2, y: CX.y + CX.s / 2 };
+  function fxSvg(sc) {
+    const col = (st) => `var(--${st || "executive"})`;
+    switch (sc.fx) {
+      case "breath": return [0, 1, 2].map((i) => `<circle class="fx-breath" style="animation-delay:${i * .7}s;transform-origin:${ac.x}px ${ac.y}px" cx="${ac.x}" cy="${ac.y}" r="70" fill="none" stroke="var(--accent)" stroke-width="3"/>`).join("") + `<text x="${ac.x}" y="${AX.y - 8}" text-anchor="middle" class="fx-label">breathe in… and out</text>`;
+      case "waves": return [0, 1, 2, 3].map((i) => `<path class="fx-wave" style="animation-delay:${i * .45}s" d="M${ac.x + 70} ${ac.y - 26} q16 26 0 52" fill="none" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>`).join("") + `<text x="300" y="${ac.y - 50}" text-anchor="middle" class="fx-label">calm downloads</text>`;
+      case "bolt": return `<g class="fx-bolt"><path d="M${cc.x + 10} 18 l-26 44 h20 l-14 40 l40 -54 h-22 l14 -30z" fill="var(--survival)" stroke="var(--on-state)" stroke-width="2"/></g><circle class="fx-flash" cx="${cc.x}" cy="${cc.y}" r="80" fill="var(--survival)"/>`;
+      case "heart": return `<path class="fx-travel" d="M0 6 C-14 -8 -26 6 0 24 C26 6 14 -8 0 6Z" fill="var(--accent-2)" style="--fx:${ac.x + 60}px;--fy:${ac.y - 20}px;--tx:${cc.x - 60}px;--ty:${cc.y - 30}px"/><path class="fx-travel" style="animation-delay:.6s;--fx:${ac.x + 60}px;--fy:${ac.y}px;--tx:${cc.x - 60}px;--ty:${cc.y - 10}px" d="M0 4 C-9 -5 -17 4 0 16 C17 4 9 -5 0 4Z" fill="var(--accent-2)"/>`;
+      case "ball": return `<g class="fx-ball" style="--fx:${ac.x + 60}px;--fy:${ac.y - 10}px;--mx:300px;--my:40px;--tx:${cc.x - 55}px;--ty:${cc.y - 20}px"><circle r="22" fill="var(--surface-solid)" stroke="var(--ink)" stroke-width="2"/><path d="M-22 0 A22 22 0 0 1 22 0Z" fill="var(--accent-2)"/><path d="M-8 -20 A22 22 0 0 1 8 -20 L0 0Z" fill="var(--emotional)"/></g><text x="300" y="30" text-anchor="middle" class="fx-label">feelings · power · responsibility</text>`;
+      case "hold": return `<g transform="translate(${ac.x + 70} ${ac.y - 10})"><g class="fx-bob"><circle r="22" fill="var(--surface-solid)" stroke="var(--ink)" stroke-width="2"/><path d="M-22 0 A22 22 0 0 1 22 0Z" fill="var(--accent-2)"/></g></g><text x="${ac.x + 70}" y="${ac.y - 44}" text-anchor="middle" class="fx-label">adult keeps the ball</text>`;
+      case "throw": return `<g class="fx-throw" style="--fx:${ac.x + 60}px;--fy:${ac.y - 10}px;--tx:${cc.x - 20}px;--ty:${cc.y - 20}px"><circle r="22" fill="var(--surface-solid)" stroke="var(--ink)" stroke-width="2"/><path d="M-22 0 A22 22 0 0 1 22 0Z" fill="var(--bad)"/></g><circle class="fx-flash" style="animation-delay:.7s" cx="${cc.x}" cy="${cc.y}" r="80" fill="var(--survival)"/>`;
+      case "shield": return `<path class="fx-shield" style="transform-origin:${cc.x}px ${cc.y}px" d="M${cc.x} ${cc.y - 92} l70 26 v42 c0 44 -30 70 -70 80 c-40 -10 -70 -36 -70 -80 v-42z" fill="var(--executive)" fill-opacity=".12" stroke="var(--executive)" stroke-width="3"/>`;
+      case "bulb": return `<g class="fx-bulb" style="transform-origin:${cc.x}px 50px"><g stroke="var(--emotional)" stroke-width="3" stroke-linecap="round">${[0, 45, 90, 135, 180].map((a) => { const r = (a + 180) * Math.PI / 180; return `<line x1="${cc.x + Math.cos(r) * 32}" y1="${50 + Math.sin(r) * 32}" x2="${cc.x + Math.cos(r) * 44}" y2="${50 + Math.sin(r) * 44}"/>`; }).join("")}</g><circle cx="${cc.x}" cy="50" r="20" fill="var(--emotional)"/><rect x="${cc.x - 9}" y="68" width="18" height="12" rx="3" fill="var(--ink-soft)"/></g>`;
+      case "light": return `<polygon class="fx-beam" points="${ac.x + 55},${ac.y + 10} 300,22 560,22 560,72 300,72" fill="url(#beam)"/><g class="fx-pop"><rect x="330" y="22" width="230" height="50" rx="14" fill="var(--surface-solid)" stroke="${sc.bad ? "var(--bad)" : "var(--good)"}" stroke-width="2.5"/><text x="445" y="53" text-anchor="middle" class="fx-big" fill="${sc.bad ? "var(--bad)" : "var(--good)"}">${esc(sc.label)}</text></g>`;
+      case "choices": return (sc.opts || []).map((o, i) => `<g class="fx-pop" style="animation-delay:${i * .35}s"><rect x="215" y="${20 + i * 56}" width="170" height="44" rx="12" fill="var(--surface-solid)" stroke="var(--accent)" stroke-width="2"/><text x="300" y="${48 + i * 56}" text-anchor="middle" class="fx-big" fill="var(--accent)">${esc(o)}</text></g>`).join("");
+      case "spark": return [[cc.x - 70, 70], [cc.x + 70, 80], [cc.x, 40], [ac.x - 60, 80], [ac.x + 60, 60], [300, 50]].map(([x, y], i) => `<path class="fx-star" style="animation-delay:${i * .2}s;transform-origin:${x}px ${y}px" d="M${x} ${y - 12} l3.5 8.5 9 .8 -6.8 6 2 8.8 -7.7 -4.6 -7.7 4.6 2 -8.8 -6.8 -6 9 -.8z" fill="var(--emotional)"/>`).join("");
+      case "question": return `<text class="fx-bob" x="${ac.x}" y="${AX.y - 6}" text-anchor="middle" font-size="44" font-family="var(--f-display)" fill="var(--accent-2)">?</text>`;
+      case "split": return `<g class="fx-pop"><rect x="200" y="22" width="90" height="40" rx="10" fill="color-mix(in srgb, var(--bad) 18%, transparent)" stroke="var(--bad)"/><text x="245" y="47" text-anchor="middle" class="fx-big" fill="var(--bad)">${esc((sc.opts || [])[0] || "")}</text></g><g class="fx-pop" style="animation-delay:.4s"><rect x="310" y="22" width="90" height="40" rx="10" fill="color-mix(in srgb, var(--good) 18%, transparent)" stroke="var(--good)"/><text x="355" y="47" text-anchor="middle" class="fx-big" fill="var(--good)">${esc((sc.opts || [])[1] || "")}</text></g>`;
+      default: return "";
+    }
+  }
+  function stageSvg(sc, who) {
+    return `<svg class="ex-svg" viewBox="0 0 600 300" role="img" aria-label="${esc(sc.cap)}">
+      <defs><linearGradient id="beam" x1="0" x2="1"><stop offset="0" stop-color="var(--emotional)" stop-opacity=".55"/><stop offset="1" stop-color="var(--emotional)" stop-opacity=".05"/></linearGradient></defs>
+      <ellipse cx="${ac.x}" cy="282" rx="80" ry="10" fill="var(--ink)" opacity=".12"/><ellipse cx="${cc.x}" cy="282" rx="68" ry="9" fill="var(--ink)" opacity=".12"/>
+      <svg x="${AX.x}" y="${AX.y}" width="${AX.s}" height="${AX.s}" style="width:${AX.s}px;height:${AX.s}px" viewBox="0 0 200 200" class="avatar ${sc.a || "executive"}">${avatarInner(sc.a || "executive")}</svg>
+      <svg x="${CX.x}" y="${CX.y}" width="${CX.s}" height="${CX.s}" style="width:${CX.s}px;height:${CX.s}px" viewBox="0 0 200 200" class="avatar ${sc.c || "emotional"}">${avatarInner(sc.c || "emotional")}</svg>
+      <text x="${ac.x}" y="${AX.y + AX.s + 14}" text-anchor="middle" class="fx-name">TEACHER</text>
+      <text x="${cc.x}" y="${CX.y + CX.s + 14}" text-anchor="middle" class="fx-name">${esc((who || "CHILD").toUpperCase())}</text>
+      <g class="fx">${fxSvg(sc)}</g></svg>`;
+  }
+  function explainer(ex, key) {
+    return `<div class="card explainer" data-ex="${key}">
+      <div class="ex-head"><span class="eyebrow">Watch it in action · ${ex.scenes.length} scenes</span><div class="pill-row"><button class="btn ghost small" type="button" data-exprev aria-label="Previous scene">←</button><button class="btn small" type="button" data-explay>${icon("play")} Play</button><button class="btn ghost small" type="button" data-exnext aria-label="Next scene">→</button></div></div>
+      <div class="ex-cap" aria-live="polite"></div>
+      <div class="ex-stage"></div>
+      <div class="ex-lines"><div class="ex-say teacher"></div><div class="ex-say child"></div></div>
+      <div class="ex-dots"></div></div>`;
+  }
+  function wireExplainers(root) {
+    $$(".explainer", root).forEach((el) => {
+      const key = el.dataset.ex;
+      const ex = key === "brain" ? C.brain.explainer : (C.modules.find((m) => m.id === key) || {}).explainer;
+      if (!ex) return;
+      let i = 0, timer = null, playing = false;
+      const playBtn = $("[data-explay]", el);
+      const show = (k) => {
+        i = Math.max(0, Math.min(ex.scenes.length - 1, k));
+        const sc = ex.scenes[i];
+        $(".ex-cap", el).innerHTML = `<span class="ex-num">${i + 1}</span><span>${esc(sc.cap)}</span>`;
+        $(".ex-stage", el).innerHTML = stageSvg(sc, ex.who);
+        const t = $(".ex-say.teacher", el), c = $(".ex-say.child", el);
+        t.innerHTML = sc.as ? `<span class="tag">Teacher</span><span>${esc(sc.as)}</span>` : "";
+        c.innerHTML = sc.cs ? `<span class="tag">${esc(ex.who || "Child")}</span><span>${esc(sc.cs)}</span>` : "";
+        t.hidden = !sc.as; c.hidden = !sc.cs;
+        $(".ex-dots", el).innerHTML = ex.scenes.map((_, k) => `<button type="button" class="${k === i ? "on" : k < i ? "past" : ""}" data-k="${k}" aria-label="Scene ${k + 1}"></button>`).join("");
+        $$(".ex-dots button", el).forEach((b) => b.addEventListener("click", () => { stop(); show(+b.dataset.k); }));
+        if (i === ex.scenes.length - 1) award("explainer:" + key, 15, "Watched an explainer");
+      };
+      const stop = () => { clearInterval(timer); playing = false; playBtn.innerHTML = `${icon("play")} Play`; };
+      const play = () => {
+        if (i >= ex.scenes.length - 1) show(0);
+        playing = true; playBtn.innerHTML = `${icon("reset")} Pause`;
+        timer = setInterval(() => { if (i >= ex.scenes.length - 1) stop(); else show(i + 1); }, 4200);
+      };
+      playBtn.addEventListener("click", () => (playing ? stop() : play()));
+      $("[data-exprev]", el).addEventListener("click", () => { stop(); show(i - 1); });
+      $("[data-exnext]", el).addEventListener("click", () => { stop(); show(i + 1); });
+      window.addEventListener("hashchange", stop, { once: true });
+      show(0);
+    });
+  }
+
+  /* Iceberg: behaviour above the waterline, the state and needs beneath it */
+  function iceberg() {
+    return `<svg class="iceberg" viewBox="0 0 600 360" role="img" aria-label="Iceberg: behaviour is the visible tip; brain state, old recordings and unmet needs lie beneath">
+      <defs><linearGradient id="sea" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--accent)" stop-opacity=".28"/><stop offset="1" stop-color="var(--accent-3)" stop-opacity=".08"/></linearGradient>
+      <linearGradient id="ice" x1="0" x2="1"><stop offset="0" stop-color="var(--ink)" stop-opacity=".9"/><stop offset="1" stop-color="var(--ink-soft)" stop-opacity=".7"/></linearGradient></defs>
+      <rect x="0" y="120" width="600" height="240" fill="url(#sea)"/>
+      <g class="ice-bob">
+        <path d="M250 120 L285 50 L305 70 L325 30 L360 120 Z" fill="url(#ice)"/>
+        <path d="M250 120 L360 120 L430 190 L470 300 L380 345 L230 345 L140 290 L170 190 Z" fill="var(--ink-soft)" fill-opacity=".35" stroke="var(--ink-soft)" stroke-opacity=".5"/>
+      </g>
+      <path class="ice-wave" d="M0 120 q25 -8 50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0 t50 0" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+      <g><text x="30" y="40" class="ice-t">BEHAVIOUR · what we see</text><text x="30" y="60" class="ice-s">hitting · back talk · refusing</text><line x1="210" y1="52" x2="282" y2="70" stroke="var(--ink-soft)" stroke-dasharray="3 3"/></g>
+      <g><text x="300" y="175" text-anchor="middle" class="ice-t">BRAIN STATE</text><text x="300" y="193" text-anchor="middle" class="ice-s">survival · emotional · executive</text></g>
+      <g><text x="300" y="235" text-anchor="middle" class="ice-t">OLD RECORDINGS</text><text x="300" y="253" text-anchor="middle" class="ice-s">scripts and beliefs from early life</text></g>
+      <g><text x="300" y="295" text-anchor="middle" class="ice-t">UNMET NEEDS</text><text x="300" y="313" text-anchor="middle" class="ice-s">safety · connection · a missing skill</text></g>
+      <text x="20" y="112" class="ice-s">waterline</text>
+    </svg>`;
+  }
+
+  /* ---------- Hairline figures: thin isometric line drawings that answer the pointer ---------- */
+  const ISO = (x, y, z) => [(x - y) * 0.866, (x + y) * 0.5 - z];
+  const pts = (arr) => arr.map((p) => ISO(...p).map((v) => v.toFixed(1)).join(",")).join(" ");
+  function isoBox(x, y, z, w, d, hgt, o) {
+    // top face, and the two visible side faces, as hairline outlines
+    const top = [[x, y, z + hgt], [x + w, y, z + hgt], [x + w, y + d, z + hgt], [x, y + d, z + hgt]];
+    const left = [[x, y + d, z], [x + w, y + d, z], [x + w, y + d, z + hgt], [x, y + d, z + hgt]];
+    const right = [[x + w, y, z], [x + w, y + d, z], [x + w, y + d, z + hgt], [x + w, y, z + hgt]];
+    const fill = o.fill || "var(--surface-solid)";
+    return `<g class="hl-box ${o.cls || ""}">
+      <polygon points="${pts(left)}" fill="${fill}" fill-opacity="${o.on ? .9 : .55}" stroke="${o.stroke}" stroke-width="1.2"/>
+      <polygon points="${pts(right)}" fill="${fill}" fill-opacity="${o.on ? .75 : .4}" stroke="${o.stroke}" stroke-width="1.2"/>
+      <polygon points="${pts(top)}" fill="${o.on ? o.stroke : fill}" fill-opacity="${o.on ? .22 : .7}" stroke="${o.stroke}" stroke-width="1.4"/>
+      ${o.grid ? [1, 2, 3].map((k) => `<polyline points="${pts([[x + (w * k) / 4, y, z + hgt], [x + (w * k) / 4, y + d, z + hgt]])}" fill="none" stroke="${o.stroke}" stroke-opacity=".35" stroke-width=".8"/>`).join("") : ""}
+    </g>`;
+  }
+  const HAIR = {
+    stack: {
+      label: "The Conscious Discipline pyramid. Move your pointer over it to pull the layers apart.",
+      vb: "-200 -235 470 300",
+      draw(k) {
+        const layers = [["Brain State Model", "--survival"], ["Seven Powers", "--emotional"], ["School Family", "--executive"], ["Seven Skills", "--accent"]];
+        const gap = 18 + k * 34;
+        return layers.map(([name, c], i) => {
+          const s = 150 - i * 26, off = (150 - s) / 2;
+          const z = i * gap;
+          const [lx, ly] = ISO(off - 75 + s, off - 75, z + 14);
+          return isoBox(off - 75, off - 75, z, s, s, 14, { stroke: `var(${c})`, on: k > .35, grid: true }) +
+            `<g class="hl-tag" style="opacity:${.35 + k * .65}"><line x1="${lx.toFixed(1)}" y1="${ly.toFixed(1)}" x2="${(lx + 40).toFixed(1)}" y2="${ly.toFixed(1)}" stroke="var(${c})" stroke-width="1" stroke-dasharray="3 3"/><text x="${(lx + 44).toFixed(1)}" y="${(ly + 4).toFixed(1)}" fill="var(--ink)" class="hl-text">${name}</text></g>`;
+        }).join("");
+      },
+    },
+    elevator: {
+      label: "The brain-state building. Move your pointer up and down to ride the elevator between floors.",
+      vb: "-190 -265 420 345",
+      draw(k) {
+        const floors = [["Survival", "--survival", "Am I safe?"], ["Emotional", "--emotional", "Am I loved?"], ["Executive", "--executive", "What can I learn?"]];
+        const level = Math.round(k * 2); // 0..2, pointer high = executive
+        const H = 62;
+        let out = "";
+        floors.forEach(([n, c, q], i) => {
+          out += isoBox(-70, -70, i * H, 140, 140, H - 8, { stroke: `var(${c})`, on: i === level });
+          const [tx, ty] = ISO(70, -70, i * H + H / 2);
+          out += `<g style="opacity:${i === level ? 1 : .45}"><text x="${(tx + 14).toFixed(1)}" y="${(ty - 2).toFixed(1)}" class="hl-text" fill="var(${c})">${n}</text><text x="${(tx + 14).toFixed(1)}" y="${(ty + 14).toFixed(1)}" class="hl-sub" fill="var(--ink-soft)">${q}</text></g>`;
+        });
+        // glass shaft and the car
+        const carZ = k * (H * 2);
+        out += `<polyline points="${pts([[-70, 70, 0], [-70, 70, H * 3 + 20]])}" stroke="var(--accent)" stroke-width="1" stroke-dasharray="4 4" fill="none"/>`;
+        out += isoBox(-92, 48, carZ + 6, 30, 30, 40, { stroke: "var(--accent)", on: true, fill: "var(--accent)" });
+        return out;
+      },
+    },
+  };
+  function wireHair(rootEl) {
+    $$("[data-hair]", rootEl).forEach((box) => {
+      const F = HAIR[box.dataset.hair];
+      if (!F) return;
+      let k = box.dataset.hair === "elevator" ? 1 : 0, target = k, raf = 0;
+      const render = () => { box.innerHTML = `<svg viewBox="${F.vb}" class="hl-svg" role="img" aria-label="${esc(F.label)}">${F.draw(k)}</svg>`; };
+      const loop = () => {
+        k += (target - k) * .14;
+        render();
+        if (Math.abs(target - k) > .002) raf = requestAnimationFrame(loop); else { k = target; render(); raf = 0; }
+      };
+      const go = () => { if (!raf) raf = requestAnimationFrame(loop); };
+      render();
+      box.parentElement.addEventListener("pointermove", (e) => {
+        const r = box.getBoundingClientRect();
+        if (box.dataset.hair === "elevator") target = Math.max(0, Math.min(1, 1 - (e.clientY - r.top) / r.height));
+        else { const dx = (e.clientX - (r.left + r.width / 2)) / r.width, dy = (e.clientY - (r.top + r.height / 2)) / r.height; target = Math.max(0, 1 - Math.hypot(dx, dy) * 1.4); }
+        go();
+      });
+      box.parentElement.addEventListener("pointerleave", () => { target = box.dataset.hair === "elevator" ? 1 : 0; go(); });
+      // Without a pointer (touch, keyboard), a tap cycles the figure
+      box.addEventListener("click", () => { target = box.dataset.hair === "elevator" ? (Math.round(target * 2) + 1) % 3 / 2 : target > .5 ? 0 : 1; go(); });
+      if (!reduced && box.dataset.hair === "stack") { target = 1; go(); setTimeout(() => { target = 0; go(); }, 1400); }
     });
   }
 

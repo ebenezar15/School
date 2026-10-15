@@ -548,3 +548,70 @@ textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 4
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   #neural { display: none; }
 }
+
+/* ---------- Animated explainers ---------- */
+.explainer { display: grid; gap: .8rem; }
+.ex-head { display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; }
+.ex-cap { display: flex; gap: .7rem; align-items: center; min-height: 3em; font-weight: 500; animation: rise .4s ease; }
+.ex-num { flex: none; width: 30px; height: 30px; border-radius: 10px; display: grid; place-items: center; font-family: var(--f-mono); font-size: .8rem; background: linear-gradient(120deg, var(--accent), var(--accent-3)); color: var(--accent-ink); box-shadow: 0 0 14px var(--glow); }
+.ex-stage { border-radius: var(--r-sm); background: radial-gradient(ellipse at 50% 100%, var(--glow), transparent 70%), var(--surface-2); border: 1px solid var(--line); overflow: hidden; }
+.ex-svg { display: block; width: 100%; height: auto; }
+.ex-svg .avatar.survival .aura, .ex-svg .avatar.emotional .aura, .ex-svg .avatar.executive .aura { transform-box: view-box; }
+.ex-svg > svg { animation: rise .5s ease; }
+.ex-lines { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
+.ex-say { display: grid; gap: .3rem; align-content: start; padding: .7rem .85rem; border-radius: var(--r-sm); border: 1px solid var(--line); font-size: .92rem; animation: rise .4s ease; }
+.ex-say.teacher { grid-column: 1; background: color-mix(in srgb, var(--accent) 10%, transparent); border-left: 3px solid var(--accent); }
+.ex-say.child { grid-column: 2; background: color-mix(in srgb, var(--accent-2) 10%, transparent); border-right: 3px solid var(--accent-2); font-family: var(--f-hand); font-size: 1.08rem; text-align: right; }
+.ex-say.child .tag { justify-self: end; font-family: var(--f-mono); }
+@media (max-width: 560px) { .ex-lines { grid-template-columns: minmax(0,1fr); } .ex-say.teacher, .ex-say.child { grid-column: 1; } }
+.ex-dots { display: flex; gap: 6px; justify-content: center; }
+.ex-dots button { width: 26px; height: 6px; border-radius: 99px; border: 1px solid var(--line); background: var(--surface-2); cursor: pointer; padding: 0; transition: background .3s, width .3s; }
+.ex-dots button.past { background: color-mix(in srgb, var(--accent) 45%, transparent); }
+.ex-dots button.on { background: var(--accent); width: 40px; box-shadow: 0 0 10px var(--glow); }
+.fx-label { font-family: var(--f-mono); font-size: 12px; fill: var(--ink-soft); letter-spacing: .08em; }
+.fx-name { font-family: var(--f-mono); font-size: 11px; fill: var(--ink-soft); letter-spacing: .14em; }
+.fx-big { font-family: var(--f-display); font-weight: 600; font-size: 15px; }
+.fx-breath { animation: fxBreath 2.1s ease-out infinite; opacity: 0; }
+@keyframes fxBreath { from { transform: scale(.7); opacity: .9; } to { transform: scale(1.5); opacity: 0; } }
+.fx-wave { animation: fxWave 1.8s linear infinite; opacity: 0; }
+@keyframes fxWave { 0% { transform: translateX(0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateX(150px); opacity: 0; } }
+.fx-bolt { animation: fxBolt .6s cubic-bezier(.3,1.6,.5,1) both; }
+@keyframes fxBolt { from { transform: translateY(-60px); opacity: 0; } }
+.fx-flash { opacity: 0; animation: fxFlash .7s ease-out .25s; }
+@keyframes fxFlash { 30% { opacity: .35; } to { opacity: 0; } }
+.fx-travel { animation: fxTravel 2.2s ease-in-out infinite; }
+@keyframes fxTravel { from { transform: translate(var(--fx), var(--fy)) scale(.6); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } to { transform: translate(var(--tx), var(--ty)) scale(1.1); opacity: 0; } }
+.fx-ball { animation: fxBall 2.4s ease-in-out infinite; }
+@keyframes fxBall { 0% { transform: translate(var(--fx), var(--fy)) rotate(0); } 50% { transform: translate(var(--mx), var(--my)) rotate(200deg); } 80%, 100% { transform: translate(var(--tx), var(--ty)) rotate(360deg); } }
+.fx-throw { animation: fxThrow .8s cubic-bezier(.6,0,.9,.6) both; }
+@keyframes fxThrow { from { transform: translate(var(--fx), var(--fy)); } to { transform: translate(var(--tx), var(--ty)) rotate(540deg); } }
+.fx-bob { animation: fxBob 1.6s ease-in-out infinite; }
+@keyframes fxBob { 50% { transform: translateY(-8px); } }
+.fx-shield { animation: fxShield .8s cubic-bezier(.2,1.4,.4,1) both, fxPulse 2.4s ease-in-out .8s infinite; }
+@keyframes fxShield { from { transform: scale(.4); opacity: 0; } }
+@keyframes fxPulse { 50% { opacity: .55; } }
+.fx-bulb { animation: fxShield .7s cubic-bezier(.2,1.5,.4,1) both, fxGlow 1.6s ease-in-out .7s infinite; }
+@keyframes fxGlow { 50% { filter: drop-shadow(0 0 12px var(--emotional)); } }
+.fx-beam { animation: fxBeam .7s ease-out both, fxPulse 2s ease-in-out .7s infinite; transform-origin: 140px 180px; }
+@keyframes fxBeam { from { transform: scaleX(0); opacity: 0; } }
+.fx-pop { animation: fxPop .55s cubic-bezier(.2,1.5,.4,1) both; transform-box: fill-box; transform-origin: center; }
+@keyframes fxPop { from { transform: scale(.3); opacity: 0; } }
+.fx-star { animation: fxStar 1.4s ease-in-out infinite; }
+@keyframes fxStar { 0%, 100% { transform: scale(.4) rotate(0); opacity: .3; } 50% { transform: scale(1.2) rotate(40deg); opacity: 1; } }
+
+/* Iceberg */
+.iceberg { width: 100%; height: auto; display: block; }
+.ice-bob { animation: iceBob 6s ease-in-out infinite; }
+@keyframes iceBob { 50% { transform: translateY(5px); } }
+.ice-wave { animation: iceWave 3s linear infinite; }
+@keyframes iceWave { to { transform: translateX(-100px); } }
+.ice-t { font-family: var(--f-mono); font-size: 12.5px; letter-spacing: .1em; fill: var(--ink); font-weight: 700; }
+.ice-s { font-family: var(--f-body); font-size: 12.5px; fill: var(--ink-soft); }
+
+/* Hairline figures */
+.hl { width: 100%; max-width: 420px; justify-self: center; cursor: crosshair; touch-action: manipulation; }
+.hl-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.hl-svg .hl-box polygon { transition: fill-opacity .3s; }
+.hl-text { font-family: var(--f-mono); font-size: 11px; letter-spacing: .06em; font-weight: 700; }
+.hl-sub { font-family: var(--f-body); font-size: 10.5px; }
+.ex-stage .ex-svg { max-width: 700px; margin: 0 auto; }
